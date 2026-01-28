@@ -29,6 +29,7 @@ The definitions are split by type to keep dependencies minimal:
 | [`sentinel/floatutils`](sentinel/floatutils) | `float32`, `float64` | `NaN` (Quiet) |
 | [`sentinel/intutils`](sentinel/intutils) | `int` | `math.MinInt` |
 | [`sentinel/stringutils`](sentinel/stringutils) | `string` | `"\x00unspecified"` |
+| [`sentinel/boolutils`](sentinel/boolutils) | `BooleanValue` | `BooleanValueUnspecified` (Enum) |
 
 ## Quick Start
 
@@ -69,6 +70,30 @@ func MergeConfigs(base, override int) int {
     return intutils.MergeIntValue(base, override)
 }
 ```
+### Boolean Values (Tri-state)
+
+For booleans, we cannot use a sentinel value (both `true` and `false` are valid). We use a zero-allocation struct wrapper:
+
+```go
+import "github.com/zodimo/go-sentinel-helper/sentinel/boolutils"
+
+type FeatureFlag struct {
+    Enabled boolutils.BooleanValue
+}
+
+func NewFeature(enabled bool) FeatureFlag {
+    return FeatureFlag{
+        // Convert bool -> BooleanValue
+        Enabled: boolutils.BooleanValueFrom(enabled), 
+    }
+}
+
+func (f FeatureFlag) IsEnabled() bool {
+    // defaults to false if unspecified
+    return f.Enabled.Bool() 
+}
+```
+
 
 # License
 Distributed under the MIT License. See `LICENSE` for more information.
