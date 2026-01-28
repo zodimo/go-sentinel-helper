@@ -3,7 +3,7 @@
 
 ---
 
-> **AGENT CONTRACT**: This is a single-file, copy-paste-ready reference. Every exported type `T` must provide exactly **4 symbols**:  
+> **AGENT CONTRACT**: This is a single-file, copy-paste-ready reference. Every exported type `T` must provide exactly **10 symbols**:  
 > 1. `TUnspecified` – sentinel (constant for values, singleton for structs)  
 > 2. `IsSpecifiedT` – predicate, package-level function  
 > 3. `TakeOrElseT` – 2-param fallback, package-level function  
