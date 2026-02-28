@@ -95,5 +95,25 @@ func (f FeatureFlag) IsEnabled() bool {
 ```
 
 
+# Possible future extensions
+
+## Validation
+
+```go
+import (
+    "github.com/bufbuild/protovalidate-go"
+)
+
+var validator, _ = protovalidate.New()
+
+func ValidateUserProfile(u UserProfile) error {
+    if !IsSpecifiedUserProfile(u) {
+        return nil // Or return a "required" error if the object is mandatory
+    }
+    return validator.Validate(u.data)
+}
+```
+
+
 # License
 Distributed under the MIT License. See `LICENSE` for more information.

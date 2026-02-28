@@ -1,7 +1,8 @@
-.PHONY: help tag-patch tag-minor tag-major
+.PHONY: help tag-patch tag-minor tag-major test
 
 help:
 	@echo "Available targets:"
+	@echo "  test        - Run tests"
 	@echo "  tag-patch   - Increment patch version (v0.0.X -> v0.0.X+1)"
 	@echo "  tag-minor   - Increment minor version (v0.X.0 -> v0.X+1.0)"
 	@echo "  tag-major   - Increment major version (vX.0.0 -> vX+1.0.0)"
@@ -15,6 +16,10 @@ CURRENT_TAG := $(if $(LATEST_TAG),$(LATEST_TAG),v0.0.0)
 MAJOR := $(shell echo $(CURRENT_TAG) | awk -F. '{print $$1}' | sed 's/v//')
 MINOR := $(shell echo $(CURRENT_TAG) | awk -F. '{print $$2}')
 PATCH := $(shell echo $(CURRENT_TAG) | awk -F. '{print $$3}')
+
+test:
+	go test ./...
+
 
 tag-patch:
 	@echo "Current version: $(CURRENT_TAG)"
