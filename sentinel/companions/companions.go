@@ -70,7 +70,7 @@ func (sc *scalarCompanion[T]) Copy(s T) T {
 	return sc.copy(s)
 }
 
-type structCompoanion[T any] struct {
+type structCompanion[T any] struct {
 	unspecified   func() T
 	stringer      func(T) string
 	isSpecified   func(T) bool
@@ -84,7 +84,7 @@ type structCompoanion[T any] struct {
 	copy          func(s T, options ...func(T)) T
 }
 
-func NewStructCompoanion[T any](
+func NewStructCompanion[T any](
 	unspecified func() T,
 	stringer func(T) string,
 	isSpecified func(T) bool,
@@ -96,8 +96,8 @@ func NewStructCompoanion[T any](
 	equal func(a, b T) bool,
 	coalesce func(ptr, def T) T,
 	copy func(s T, options ...func(T)) T,
-) StructCompoanion[T] {
-	return &structCompoanion[T]{
+) StructCompanion[T] {
+	return &structCompanion[T]{
 		unspecified:   unspecified,
 		stringer:      stringer,
 		isSpecified:   isSpecified,
@@ -112,37 +112,37 @@ func NewStructCompoanion[T any](
 	}
 }
 
-func (sc *structCompoanion[T]) Unspecified() T {
+func (sc *structCompanion[T]) Unspecified() T {
 	return sc.unspecified()
 }
-func (sc *structCompoanion[T]) String(s T) string {
+func (sc *structCompanion[T]) String(s T) string {
 	return sc.stringer(s)
 }
-func (sc *structCompoanion[T]) IsSpecified(s T) bool {
+func (sc *structCompanion[T]) IsSpecified(s T) bool {
 	return sc.isSpecified(s)
 }
-func (sc *structCompoanion[T]) IsUnspecified(s T) bool {
+func (sc *structCompanion[T]) IsUnspecified(s T) bool {
 	return sc.isUnspecified(s)
 }
-func (sc *structCompoanion[T]) TakeOrElse(src, def T) T {
+func (sc *structCompanion[T]) TakeOrElse(src, def T) T {
 	return sc.takeOrElse(src, def)
 }
-func (sc *structCompoanion[T]) Merge(a, b T) T {
+func (sc *structCompanion[T]) Merge(a, b T) T {
 	return sc.merge(a, b)
 }
-func (sc *structCompoanion[T]) Same(a, b T) bool {
+func (sc *structCompanion[T]) Same(a, b T) bool {
 	return sc.same(a, b)
 }
-func (sc *structCompoanion[T]) SemanticEqual(a, b T) bool {
+func (sc *structCompanion[T]) SemanticEqual(a, b T) bool {
 	return sc.semanticEqual(a, b)
 }
-func (sc *structCompoanion[T]) Equal(a, b T) bool {
+func (sc *structCompanion[T]) Equal(a, b T) bool {
 	return sc.equal(a, b)
 }
 
-func (sc *structCompoanion[T]) Coalesce(ptr, def T) T {
+func (sc *structCompanion[T]) Coalesce(ptr, def T) T {
 	return sc.coalesce(ptr, def)
 }
-func (sc *structCompoanion[T]) Copy(s T, options ...func(T)) T {
-	return sc.Copy(s, options...)
+func (sc *structCompanion[T]) Copy(s T, options ...func(T)) T {
+	return sc.copy(s, options...)
 }

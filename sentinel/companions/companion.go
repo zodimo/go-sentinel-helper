@@ -17,7 +17,7 @@ type ScalarCompanion[T any] interface {
 	Copy(s T) T
 }
 
-type StructCompoanion[T any] interface {
+type StructCompanion[T any] interface {
 	Companion[T]
 	Coalesce(ptr, def T) T
 	Copy(s T, options ...func(T)) T
