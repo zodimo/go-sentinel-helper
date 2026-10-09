@@ -3,92 +3,121 @@ package protobufwrapper
 import (
 	"fmt"
 
+	"github.com/zodimo/go-sentinel-helper/sentinel/companions"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // FloatValue
 
 // 1. Sentinel
-var FloatValueUnspecified = &wrapperspb.FloatValue{}
+var floatValueUnspecified = &wrapperspb.FloatValue{}
 
 // 2. IsSpecified
-func IsSpecifiedFloatValue(v *wrapperspb.FloatValue) bool {
-	return v != nil && v != FloatValueUnspecified
+func isSpecifiedFloatValue(v *wrapperspb.FloatValue) bool {
+	return v != nil && v != floatValueUnspecified
 }
 
-// 3. TakeOrElse
-func TakeOrElseFloatValue(v, def *wrapperspb.FloatValue) *wrapperspb.FloatValue {
-	if v == nil || v == FloatValueUnspecified {
+// 3. IsUnspecified
+func isUnspecifiedFloatValue(v *wrapperspb.FloatValue) bool {
+	return !isSpecifiedFloatValue(v)
+}
+
+// 4. TakeOrElse
+func takeOrElseFloatValue(v, def *wrapperspb.FloatValue) *wrapperspb.FloatValue {
+	if !isSpecifiedFloatValue(v) {
 		return def
 	}
 	return v
 }
 
-// 4. Merge
-func MergeFloatValue(a, b *wrapperspb.FloatValue) *wrapperspb.FloatValue {
-	a = CoalesceFloatValue(a, FloatValueUnspecified)
-	b = CoalesceFloatValue(b, FloatValueUnspecified)
+// 5. Merge
+func mergeFloatValue(a, b *wrapperspb.FloatValue) *wrapperspb.FloatValue {
+	a = coalesceFloatValue(a, floatValueUnspecified)
+	b = coalesceFloatValue(b, floatValueUnspecified)
 
-	if a == FloatValueUnspecified {
+	if a == floatValueUnspecified {
 		return b
 	}
-	if b == FloatValueUnspecified {
+	if b == floatValueUnspecified {
 		return a
 	}
 
 	return &wrapperspb.FloatValue{Value: b.Value}
 }
 
-// 5. String
-func StringFloatValue(v *wrapperspb.FloatValue) string {
-	if !IsSpecifiedFloatValue(v) {
+// 6. String
+func stringFloatValue(v *wrapperspb.FloatValue) string {
+	if !isSpecifiedFloatValue(v) {
 		return "FloatValue{Unspecified}"
 	}
 	return fmt.Sprintf("FloatValue{%g}", v.Value)
 }
 
-// 6. Coalesce
-func CoalesceFloatValue(ptr, def *wrapperspb.FloatValue) *wrapperspb.FloatValue {
+// 7. Same
+func sameFloatValue(a, b *wrapperspb.FloatValue) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil {
+		return b == floatValueUnspecified
+	}
+	if b == nil {
+		return a == floatValueUnspecified
+	}
+	return a == b
+}
+
+// 8. SemanticEqual
+func semanticEqualFloatValue(a, b *wrapperspb.FloatValue) bool {
+	a = coalesceFloatValue(a, floatValueUnspecified)
+	b = coalesceFloatValue(b, floatValueUnspecified)
+	return a.Value == b.Value
+}
+
+// 9. Equal
+func equalFloatValue(a, b *wrapperspb.FloatValue) bool {
+	if sameFloatValue(a, b) {
+		return true
+	}
+	return semanticEqualFloatValue(a, b)
+}
+
+// 10. Coalesce
+func coalesceFloatValue(ptr, def *wrapperspb.FloatValue) *wrapperspb.FloatValue {
 	if ptr == nil {
 		return def
 	}
 	return ptr
 }
 
-// 7. Same
-func SameFloatValue(a, b *wrapperspb.FloatValue) bool {
-	if a == nil && b == nil {
-		return true
+// 11. Copy
+func copyFloatValue(v *wrapperspb.FloatValue, options ...func(*wrapperspb.FloatValue)) *wrapperspb.FloatValue {
+	if !isSpecifiedFloatValue(v) {
+		return floatValueUnspecified
 	}
-	if a == nil {
-		return b == FloatValueUnspecified
+	out := &wrapperspb.FloatValue{Value: v.Value}
+	for _, option := range options {
+		option(out)
 	}
-	if b == nil {
-		return a == FloatValueUnspecified
-	}
-	return a == b
+	return out
 }
 
-// 8. SemanticEqual
-func SemanticEqualFloatValue(a, b *wrapperspb.FloatValue) bool {
-	a = CoalesceFloatValue(a, FloatValueUnspecified)
-	b = CoalesceFloatValue(b, FloatValueUnspecified)
-
-	return a.Value == b.Value
+// 12. Unspecified
+func unspecifiedFloatValue() *wrapperspb.FloatValue {
+	return floatValueUnspecified
 }
 
-// 9. Equal
-func EqualFloatValue(a, b *wrapperspb.FloatValue) bool {
-	if !SameFloatValue(a, b) {
-		return SemanticEqualFloatValue(a, b)
-	}
-	return true
-}
-
-// 10. Copy
-func CopyFloatValue(v *wrapperspb.FloatValue) *wrapperspb.FloatValue {
-	if !IsSpecifiedFloatValue(v) {
-		return FloatValueUnspecified
-	}
-	return &wrapperspb.FloatValue{Value: v.Value}
-}
+// FloatValueCompanion is the ONLY public companion of this type.
+var FloatValueCompanion = companions.NewStructCompanion(
+	unspecifiedFloatValue,
+	stringFloatValue,
+	isSpecifiedFloatValue,
+	isUnspecifiedFloatValue,
+	takeOrElseFloatValue,
+	mergeFloatValue,
+	sameFloatValue,
+	semanticEqualFloatValue,
+	equalFloatValue,
+	coalesceFloatValue,
+	copyFloatValue,
+)

@@ -3,92 +3,121 @@ package protobufwrapper
 import (
 	"fmt"
 
+	"github.com/zodimo/go-sentinel-helper/sentinel/companions"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // BoolValue
 
 // 1. Sentinel
-var BoolValueUnspecified = &wrapperspb.BoolValue{}
+var boolValueUnspecified = &wrapperspb.BoolValue{}
 
 // 2. IsSpecified
-func IsSpecifiedBoolValue(v *wrapperspb.BoolValue) bool {
-	return v != nil && v != BoolValueUnspecified
+func isSpecifiedBoolValue(v *wrapperspb.BoolValue) bool {
+	return v != nil && v != boolValueUnspecified
 }
 
-// 3. TakeOrElse
-func TakeOrElseBoolValue(v, def *wrapperspb.BoolValue) *wrapperspb.BoolValue {
-	if v == nil || v == BoolValueUnspecified {
+// 3. IsUnspecified
+func isUnspecifiedBoolValue(v *wrapperspb.BoolValue) bool {
+	return !isSpecifiedBoolValue(v)
+}
+
+// 4. TakeOrElse
+func takeOrElseBoolValue(v, def *wrapperspb.BoolValue) *wrapperspb.BoolValue {
+	if !isSpecifiedBoolValue(v) {
 		return def
 	}
 	return v
 }
 
-// 4. Merge
-func MergeBoolValue(a, b *wrapperspb.BoolValue) *wrapperspb.BoolValue {
-	a = CoalesceBoolValue(a, BoolValueUnspecified)
-	b = CoalesceBoolValue(b, BoolValueUnspecified)
+// 5. Merge
+func mergeBoolValue(a, b *wrapperspb.BoolValue) *wrapperspb.BoolValue {
+	a = coalesceBoolValue(a, boolValueUnspecified)
+	b = coalesceBoolValue(b, boolValueUnspecified)
 
-	if a == BoolValueUnspecified {
+	if a == boolValueUnspecified {
 		return b
 	}
-	if b == BoolValueUnspecified {
+	if b == boolValueUnspecified {
 		return a
 	}
 
 	return &wrapperspb.BoolValue{Value: b.Value}
 }
 
-// 5. String
-func StringBoolValue(v *wrapperspb.BoolValue) string {
-	if !IsSpecifiedBoolValue(v) {
+// 6. String
+func stringBoolValue(v *wrapperspb.BoolValue) string {
+	if !isSpecifiedBoolValue(v) {
 		return "BoolValue{Unspecified}"
 	}
 	return fmt.Sprintf("BoolValue{%t}", v.Value)
 }
 
-// 6. Coalesce
-func CoalesceBoolValue(ptr, def *wrapperspb.BoolValue) *wrapperspb.BoolValue {
+// 7. Same
+func sameBoolValue(a, b *wrapperspb.BoolValue) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil {
+		return b == boolValueUnspecified
+	}
+	if b == nil {
+		return a == boolValueUnspecified
+	}
+	return a == b
+}
+
+// 8. SemanticEqual
+func semanticEqualBoolValue(a, b *wrapperspb.BoolValue) bool {
+	a = coalesceBoolValue(a, boolValueUnspecified)
+	b = coalesceBoolValue(b, boolValueUnspecified)
+	return a.Value == b.Value
+}
+
+// 9. Equal
+func equalBoolValue(a, b *wrapperspb.BoolValue) bool {
+	if sameBoolValue(a, b) {
+		return true
+	}
+	return semanticEqualBoolValue(a, b)
+}
+
+// 10. Coalesce
+func coalesceBoolValue(ptr, def *wrapperspb.BoolValue) *wrapperspb.BoolValue {
 	if ptr == nil {
 		return def
 	}
 	return ptr
 }
 
-// 7. Same
-func SameBoolValue(a, b *wrapperspb.BoolValue) bool {
-	if a == nil && b == nil {
-		return true
+// 11. Copy
+func copyBoolValue(v *wrapperspb.BoolValue, options ...func(*wrapperspb.BoolValue)) *wrapperspb.BoolValue {
+	if !isSpecifiedBoolValue(v) {
+		return boolValueUnspecified
 	}
-	if a == nil {
-		return b == BoolValueUnspecified
+	out := &wrapperspb.BoolValue{Value: v.Value}
+	for _, option := range options {
+		option(out)
 	}
-	if b == nil {
-		return a == BoolValueUnspecified
-	}
-	return a == b
+	return out
 }
 
-// 8. SemanticEqual
-func SemanticEqualBoolValue(a, b *wrapperspb.BoolValue) bool {
-	a = CoalesceBoolValue(a, BoolValueUnspecified)
-	b = CoalesceBoolValue(b, BoolValueUnspecified)
-
-	return a.Value == b.Value
+// 12. Unspecified
+func unspecifiedBoolValue() *wrapperspb.BoolValue {
+	return boolValueUnspecified
 }
 
-// 9. Equal
-func EqualBoolValue(a, b *wrapperspb.BoolValue) bool {
-	if !SameBoolValue(a, b) {
-		return SemanticEqualBoolValue(a, b)
-	}
-	return true
-}
-
-// 10. Copy
-func CopyBoolValue(v *wrapperspb.BoolValue) *wrapperspb.BoolValue {
-	if !IsSpecifiedBoolValue(v) {
-		return BoolValueUnspecified
-	}
-	return &wrapperspb.BoolValue{Value: v.Value}
-}
+// BoolValueCompanion is the ONLY public companion of this type.
+var BoolValueCompanion = companions.NewStructCompanion(
+	unspecifiedBoolValue,
+	stringBoolValue,
+	isSpecifiedBoolValue,
+	isUnspecifiedBoolValue,
+	takeOrElseBoolValue,
+	mergeBoolValue,
+	sameBoolValue,
+	semanticEqualBoolValue,
+	equalBoolValue,
+	coalesceBoolValue,
+	copyBoolValue,
+)

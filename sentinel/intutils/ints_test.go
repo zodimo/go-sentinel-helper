@@ -5,64 +5,66 @@ import (
 )
 
 func TestIntValue(t *testing.T) {
-	if IsSpecifiedIntValue(IntValueUnspecified) {
+	c := IntValueCompanion
+
+	if c.IsSpecified(IntValueUnspecified) {
 		t.Error("IntValueUnspecified should not be specified")
 	}
-	if !IsUnspecifiedIntValue(IntValueUnspecified) {
+	if !c.IsUnspecified(IntValueUnspecified) {
 		t.Error("IntValueUnspecified should be unspecified")
 	}
 
 	val := 42
-	if !IsSpecifiedIntValue(val) {
+	if !c.IsSpecified(val) {
 		t.Error("42 should be specified")
 	}
-	if IsUnspecifiedIntValue(val) {
+	if c.IsUnspecified(val) {
 		t.Error("42 should not be unspecified")
 	}
 
 	// TakeOrElse
-	if got := TakeOrElseIntValue(val, 100); got != val {
+	if got := c.TakeOrElse(val, 100); got != val {
 		t.Errorf("TakeOrElse(42, 100) = %d; want 42", got)
 	}
-	if got := TakeOrElseIntValue(IntValueUnspecified, 100); got != 100 {
+	if got := c.TakeOrElse(IntValueUnspecified, 100); got != 100 {
 		t.Errorf("TakeOrElse(Unspecified, 100) = %d; want 100", got)
 	}
 
 	// Merge
-	if got := MergeIntValue(10, 20); got != 20 {
+	if got := c.Merge(10, 20); got != 20 {
 		t.Errorf("Merge(10, 20) = %d; want 20", got)
 	}
-	if got := MergeIntValue(10, IntValueUnspecified); got != 10 {
+	if got := c.Merge(10, IntValueUnspecified); got != 10 {
 		t.Errorf("Merge(10, Unspecified) = %d; want 10", got)
 	}
-	if got := MergeIntValue(IntValueUnspecified, 20); got != 20 {
+	if got := c.Merge(IntValueUnspecified, 20); got != 20 {
 		t.Errorf("Merge(Unspecified, 20) = %d; want 20", got)
 	}
 
 	// String
-	if got := StringIntValue(IntValueUnspecified); got != "IntValue{Unspecified}" {
-		t.Errorf("StringIntValue(Unspecified) = %q; want 'IntValue{Unspecified}'", got)
+	if got := c.String(IntValueUnspecified); got != "IntValue{Unspecified}" {
+		t.Errorf("String(Unspecified) = %q; want 'IntValue{Unspecified}'", got)
 	}
-	if got := StringIntValue(42); got != "IntValue{42}" {
-		t.Errorf("StringIntValue(42) = %q; want 'IntValue{42}'", got)
+	if got := c.String(42); got != "IntValue{42}" {
+		t.Errorf("String(42) = %q; want 'IntValue{42}'", got)
 	}
 
 	// Identity/Equals
-	if !SameIntValue(42, 42) {
+	if !c.Same(42, 42) {
 		t.Error("Same(42, 42) should be true")
 	}
-	if SameIntValue(42, 43) {
+	if c.Same(42, 43) {
 		t.Error("Same(42, 43) should be false")
 	}
 
-	if !SemanticEqualIntValue(42, 42) {
+	if !c.SemanticEqual(42, 42) {
 		t.Error("SemanticEqual(42, 42) should be true")
 	}
-	if !EqualIntValue(42, 42) {
+	if !c.Equal(42, 42) {
 		t.Error("Equal(42, 42) should be true")
 	}
 
-	if CopyIntValue(42) != 42 {
+	if c.Copy(42) != 42 {
 		t.Error("Copy(42) should be 42")
 	}
 }

@@ -3,92 +3,121 @@ package protobufwrapper
 import (
 	"fmt"
 
+	"github.com/zodimo/go-sentinel-helper/sentinel/companions"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // DoubleValue
 
 // 1. Sentinel
-var DoubleValueUnspecified = &wrapperspb.DoubleValue{}
+var doubleValueUnspecified = &wrapperspb.DoubleValue{}
 
 // 2. IsSpecified
-func IsSpecifiedDoubleValue(v *wrapperspb.DoubleValue) bool {
-	return v != nil && v != DoubleValueUnspecified
+func isSpecifiedDoubleValue(v *wrapperspb.DoubleValue) bool {
+	return v != nil && v != doubleValueUnspecified
 }
 
-// 3. TakeOrElse
-func TakeOrElseDoubleValue(v, def *wrapperspb.DoubleValue) *wrapperspb.DoubleValue {
-	if v == nil || v == DoubleValueUnspecified {
+// 3. IsUnspecified
+func isUnspecifiedDoubleValue(v *wrapperspb.DoubleValue) bool {
+	return !isSpecifiedDoubleValue(v)
+}
+
+// 4. TakeOrElse
+func takeOrElseDoubleValue(v, def *wrapperspb.DoubleValue) *wrapperspb.DoubleValue {
+	if !isSpecifiedDoubleValue(v) {
 		return def
 	}
 	return v
 }
 
-// 4. Merge
-func MergeDoubleValue(a, b *wrapperspb.DoubleValue) *wrapperspb.DoubleValue {
-	a = CoalesceDoubleValue(a, DoubleValueUnspecified)
-	b = CoalesceDoubleValue(b, DoubleValueUnspecified)
+// 5. Merge
+func mergeDoubleValue(a, b *wrapperspb.DoubleValue) *wrapperspb.DoubleValue {
+	a = coalesceDoubleValue(a, doubleValueUnspecified)
+	b = coalesceDoubleValue(b, doubleValueUnspecified)
 
-	if a == DoubleValueUnspecified {
+	if a == doubleValueUnspecified {
 		return b
 	}
-	if b == DoubleValueUnspecified {
+	if b == doubleValueUnspecified {
 		return a
 	}
 
 	return &wrapperspb.DoubleValue{Value: b.Value}
 }
 
-// 5. String
-func StringDoubleValue(v *wrapperspb.DoubleValue) string {
-	if !IsSpecifiedDoubleValue(v) {
+// 6. String
+func stringDoubleValue(v *wrapperspb.DoubleValue) string {
+	if !isSpecifiedDoubleValue(v) {
 		return "DoubleValue{Unspecified}"
 	}
 	return fmt.Sprintf("DoubleValue{%g}", v.Value)
 }
 
-// 6. Coalesce
-func CoalesceDoubleValue(ptr, def *wrapperspb.DoubleValue) *wrapperspb.DoubleValue {
+// 7. Same
+func sameDoubleValue(a, b *wrapperspb.DoubleValue) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil {
+		return b == doubleValueUnspecified
+	}
+	if b == nil {
+		return a == doubleValueUnspecified
+	}
+	return a == b
+}
+
+// 8. SemanticEqual
+func semanticEqualDoubleValue(a, b *wrapperspb.DoubleValue) bool {
+	a = coalesceDoubleValue(a, doubleValueUnspecified)
+	b = coalesceDoubleValue(b, doubleValueUnspecified)
+	return a.Value == b.Value
+}
+
+// 9. Equal
+func equalDoubleValue(a, b *wrapperspb.DoubleValue) bool {
+	if sameDoubleValue(a, b) {
+		return true
+	}
+	return semanticEqualDoubleValue(a, b)
+}
+
+// 10. Coalesce
+func coalesceDoubleValue(ptr, def *wrapperspb.DoubleValue) *wrapperspb.DoubleValue {
 	if ptr == nil {
 		return def
 	}
 	return ptr
 }
 
-// 7. Same
-func SameDoubleValue(a, b *wrapperspb.DoubleValue) bool {
-	if a == nil && b == nil {
-		return true
+// 11. Copy
+func copyDoubleValue(v *wrapperspb.DoubleValue, options ...func(*wrapperspb.DoubleValue)) *wrapperspb.DoubleValue {
+	if !isSpecifiedDoubleValue(v) {
+		return doubleValueUnspecified
 	}
-	if a == nil {
-		return b == DoubleValueUnspecified
+	out := &wrapperspb.DoubleValue{Value: v.Value}
+	for _, option := range options {
+		option(out)
 	}
-	if b == nil {
-		return a == DoubleValueUnspecified
-	}
-	return a == b
+	return out
 }
 
-// 8. SemanticEqual
-func SemanticEqualDoubleValue(a, b *wrapperspb.DoubleValue) bool {
-	a = CoalesceDoubleValue(a, DoubleValueUnspecified)
-	b = CoalesceDoubleValue(b, DoubleValueUnspecified)
-
-	return a.Value == b.Value
+// 12. Unspecified
+func unspecifiedDoubleValue() *wrapperspb.DoubleValue {
+	return doubleValueUnspecified
 }
 
-// 9. Equal
-func EqualDoubleValue(a, b *wrapperspb.DoubleValue) bool {
-	if !SameDoubleValue(a, b) {
-		return SemanticEqualDoubleValue(a, b)
-	}
-	return true
-}
-
-// 10. Copy
-func CopyDoubleValue(v *wrapperspb.DoubleValue) *wrapperspb.DoubleValue {
-	if !IsSpecifiedDoubleValue(v) {
-		return DoubleValueUnspecified
-	}
-	return &wrapperspb.DoubleValue{Value: v.Value}
-}
+// DoubleValueCompanion is the ONLY public companion of this type.
+var DoubleValueCompanion = companions.NewStructCompanion(
+	unspecifiedDoubleValue,
+	stringDoubleValue,
+	isSpecifiedDoubleValue,
+	isUnspecifiedDoubleValue,
+	takeOrElseDoubleValue,
+	mergeDoubleValue,
+	sameDoubleValue,
+	semanticEqualDoubleValue,
+	equalDoubleValue,
+	coalesceDoubleValue,
+	copyDoubleValue,
+)

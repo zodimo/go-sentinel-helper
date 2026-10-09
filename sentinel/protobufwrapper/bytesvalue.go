@@ -5,36 +5,42 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"github.com/zodimo/go-sentinel-helper/sentinel/companions"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // BytesValue
 
 // 1. Sentinel
-var BytesValueUnspecified = &wrapperspb.BytesValue{}
+var bytesValueUnspecified = &wrapperspb.BytesValue{}
 
 // 2. IsSpecified
-func IsSpecifiedBytesValue(v *wrapperspb.BytesValue) bool {
-	return v != nil && v != BytesValueUnspecified
+func isSpecifiedBytesValue(v *wrapperspb.BytesValue) bool {
+	return v != nil && v != bytesValueUnspecified
 }
 
-// 3. TakeOrElse
-func TakeOrElseBytesValue(v, def *wrapperspb.BytesValue) *wrapperspb.BytesValue {
-	if v == nil || v == BytesValueUnspecified {
+// 3. IsUnspecified
+func isUnspecifiedBytesValue(v *wrapperspb.BytesValue) bool {
+	return !isSpecifiedBytesValue(v)
+}
+
+// 4. TakeOrElse
+func takeOrElseBytesValue(v, def *wrapperspb.BytesValue) *wrapperspb.BytesValue {
+	if !isSpecifiedBytesValue(v) {
 		return def
 	}
 	return v
 }
 
-// 4. Merge
-func MergeBytesValue(a, b *wrapperspb.BytesValue) *wrapperspb.BytesValue {
-	a = CoalesceBytesValue(a, BytesValueUnspecified)
-	b = CoalesceBytesValue(b, BytesValueUnspecified)
+// 5. Merge
+func mergeBytesValue(a, b *wrapperspb.BytesValue) *wrapperspb.BytesValue {
+	a = coalesceBytesValue(a, bytesValueUnspecified)
+	b = coalesceBytesValue(b, bytesValueUnspecified)
 
-	if a == BytesValueUnspecified {
+	if a == bytesValueUnspecified {
 		return b
 	}
-	if b == BytesValueUnspecified {
+	if b == bytesValueUnspecified {
 		return a
 	}
 
@@ -43,58 +49,81 @@ func MergeBytesValue(a, b *wrapperspb.BytesValue) *wrapperspb.BytesValue {
 	return &wrapperspb.BytesValue{Value: dst}
 }
 
-// 5. String
-func StringBytesValue(v *wrapperspb.BytesValue) string {
-	if !IsSpecifiedBytesValue(v) {
+// 6. String
+func stringBytesValue(v *wrapperspb.BytesValue) string {
+	if !isSpecifiedBytesValue(v) {
 		return "BytesValue{Unspecified}"
 	}
 	return fmt.Sprintf("BytesValue{%s}", hex.EncodeToString(v.Value))
 }
 
-// 6. Coalesce
-func CoalesceBytesValue(ptr, def *wrapperspb.BytesValue) *wrapperspb.BytesValue {
+// 7. Same
+func sameBytesValue(a, b *wrapperspb.BytesValue) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil {
+		return b == bytesValueUnspecified
+	}
+	if b == nil {
+		return a == bytesValueUnspecified
+	}
+	return a == b
+}
+
+// 8. SemanticEqual
+func semanticEqualBytesValue(a, b *wrapperspb.BytesValue) bool {
+	a = coalesceBytesValue(a, bytesValueUnspecified)
+	b = coalesceBytesValue(b, bytesValueUnspecified)
+	return bytes.Equal(a.Value, b.Value)
+}
+
+// 9. Equal
+func equalBytesValue(a, b *wrapperspb.BytesValue) bool {
+	if sameBytesValue(a, b) {
+		return true
+	}
+	return semanticEqualBytesValue(a, b)
+}
+
+// 10. Coalesce
+func coalesceBytesValue(ptr, def *wrapperspb.BytesValue) *wrapperspb.BytesValue {
 	if ptr == nil {
 		return def
 	}
 	return ptr
 }
 
-// 7. Same
-func SameBytesValue(a, b *wrapperspb.BytesValue) bool {
-	if a == nil && b == nil {
-		return true
-	}
-	if a == nil {
-		return b == BytesValueUnspecified
-	}
-	if b == nil {
-		return a == BytesValueUnspecified
-	}
-	return a == b
-}
-
-// 8. SemanticEqual
-func SemanticEqualBytesValue(a, b *wrapperspb.BytesValue) bool {
-	a = CoalesceBytesValue(a, BytesValueUnspecified)
-	b = CoalesceBytesValue(b, BytesValueUnspecified)
-
-	return bytes.Equal(a.Value, b.Value)
-}
-
-// 9. Equal
-func EqualBytesValue(a, b *wrapperspb.BytesValue) bool {
-	if !SameBytesValue(a, b) {
-		return SemanticEqualBytesValue(a, b)
-	}
-	return true
-}
-
-// 10. Copy
-func CopyBytesValue(v *wrapperspb.BytesValue) *wrapperspb.BytesValue {
-	if !IsSpecifiedBytesValue(v) {
-		return BytesValueUnspecified
+// 11. Copy
+func copyBytesValue(v *wrapperspb.BytesValue, options ...func(*wrapperspb.BytesValue)) *wrapperspb.BytesValue {
+	if !isSpecifiedBytesValue(v) {
+		return bytesValueUnspecified
 	}
 	dst := make([]byte, len(v.Value))
 	copy(dst, v.Value)
-	return &wrapperspb.BytesValue{Value: dst}
+	out := &wrapperspb.BytesValue{Value: dst}
+	for _, option := range options {
+		option(out)
+	}
+	return out
 }
+
+// 12. Unspecified
+func unspecifiedBytesValue() *wrapperspb.BytesValue {
+	return bytesValueUnspecified
+}
+
+// BytesValueCompanion is the ONLY public companion of this type.
+var BytesValueCompanion = companions.NewStructCompanion(
+	unspecifiedBytesValue,
+	stringBytesValue,
+	isSpecifiedBytesValue,
+	isUnspecifiedBytesValue,
+	takeOrElseBytesValue,
+	mergeBytesValue,
+	sameBytesValue,
+	semanticEqualBytesValue,
+	equalBytesValue,
+	coalesceBytesValue,
+	copyBytesValue,
+)

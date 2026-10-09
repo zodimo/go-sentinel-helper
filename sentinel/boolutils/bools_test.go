@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+var c = BooleanValueCompanion
+
 func TestBooleanValue_Constructors(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -30,6 +32,10 @@ func TestBooleanValue_Constructors(t *testing.T) {
 			// Bool() defaults to false for Unspecified
 			if tt.got.Bool() != tt.wantBool {
 				t.Errorf("Bool() = %v, want %v", tt.got.Bool(), tt.wantBool)
+			}
+			// Companion predicates agree with the methods.
+			if c.IsSpecified(tt.got) != tt.wantSpec {
+				t.Errorf("companion IsSpecified() = %v, want %v", c.IsSpecified(tt.got), tt.wantSpec)
 			}
 		})
 	}
@@ -89,15 +95,15 @@ func TestBooleanValue_TakeOrElse(t *testing.T) {
 	vMaybe := BooleanValueUnspecified
 
 	// If specified, should return itself
-	if got := vTrue.TakeOrElse(vFalse); !got.Equal(vTrue) {
+	if got := c.TakeOrElse(vTrue, vFalse); !c.Equal(got, vTrue) {
 		t.Errorf("TakeOrElse failed: got %v, want %v", got, vTrue)
 	}
-	if got := vFalse.TakeOrElse(vTrue); !got.Equal(vFalse) {
+	if got := c.TakeOrElse(vFalse, vTrue); !c.Equal(got, vFalse) {
 		t.Errorf("TakeOrElse failed: got %v, want %v", got, vFalse)
 	}
 
 	// If unspecified, should return default
-	if got := vMaybe.TakeOrElse(vTrue); !got.Equal(vTrue) {
+	if got := c.TakeOrElse(vMaybe, vTrue); !c.Equal(got, vTrue) {
 		t.Errorf("TakeOrElse failed: got %v, want %v", got, vTrue)
 	}
 }
@@ -110,18 +116,18 @@ func TestBooleanValue_Merge(t *testing.T) {
 	// Merge(current, incoming) -> incoming if specified, else current
 
 	// Case 1: Incoming is specified (overrides current)
-	if got := vUnspec.Merge(vTrue); !got.Equal(vTrue) {
+	if got := c.Merge(vUnspec, vTrue); !c.Equal(got, vTrue) {
 		t.Errorf("Merge(Unspec, True) = %v, want True", got)
 	}
-	if got := vFalse.Merge(vTrue); !got.Equal(vTrue) {
+	if got := c.Merge(vFalse, vTrue); !c.Equal(got, vTrue) {
 		t.Errorf("Merge(False, True) = %v, want True", got)
 	}
 
 	// Case 2: Incoming is unspecified (keeps current)
-	if got := vTrue.Merge(vUnspec); !got.Equal(vTrue) {
+	if got := c.Merge(vTrue, vUnspec); !c.Equal(got, vTrue) {
 		t.Errorf("Merge(True, Unspec) = %v, want True", got)
 	}
-	if got := vUnspec.Merge(vUnspec); !got.Equal(vUnspec) {
+	if got := c.Merge(vUnspec, vUnspec); !c.Equal(got, vUnspec) {
 		t.Errorf("Merge(Unspec, Unspec) = %v, want Unspec", got)
 	}
 }
@@ -140,9 +146,9 @@ func TestBooleanValue_String(t *testing.T) {
 		if got := tt.val.String(); got != tt.want {
 			t.Errorf("String() = %q, want %q", got, tt.want)
 		}
-		// Also test generic wrapper
-		if got := StringBooleanValue(tt.val); got != tt.want {
-			t.Errorf("StringBooleanValue() = %q, want %q", got, tt.want)
+		// Companion String agrees with the method.
+		if got := c.String(tt.val); got != tt.want {
+			t.Errorf("companion String() = %q, want %q", got, tt.want)
 		}
 	}
 }
@@ -154,40 +160,35 @@ func TestBooleanValue_Equality(t *testing.T) {
 	u1 := BooleanValueUnspecified
 	u2 := BooleanValueUnspecified
 
-	if !t1.Equal(t2) {
+	if !c.Equal(t1, t2) {
 		t.Error("True should equal True")
 	}
-	if !u1.Equal(u2) {
+	if !c.Equal(u1, u2) {
 		t.Error("Unspecified should equal Unspecified")
 	}
-	if t1.Equal(f1) {
+	if c.Equal(t1, f1) {
 		t.Error("True should not equal False")
 	}
-	if t1.Equal(u1) {
+	if c.Equal(t1, u1) {
 		t.Error("True should not equal Unspecified")
 	}
 
-	if !SameBooleanValue(t1, t2) {
-		t.Error("SameBooleanValue failed")
+	if !c.Same(t1, t2) {
+		t.Error("Same failed")
 	}
-	if !EqualBooleanValue(t1, t2) {
-		t.Error("EqualBooleanValue failed")
+	if !c.Equal(t1, t2) {
+		t.Error("Equal failed")
 	}
-	if !SemanticEqualBooleanValue(t1, t2) {
-		t.Error("SemanticEqualBooleanValue failed")
+	if !c.SemanticEqual(t1, t2) {
+		t.Error("SemanticEqual failed")
 	}
 }
 
 func TestBooleanValue_Copy(t *testing.T) {
 	v := BooleanValueTrue()
-	dup := v.Copy()
-	if !v.Equal(dup) {
+	dup := c.Copy(v)
+	if !c.Equal(v, dup) {
 		t.Error("Copy failed identity check")
-	}
-
-	dup2 := CopyBooleanValue(v)
-	if !v.Equal(dup2) {
-		t.Error("CopyBooleanValue failed identity check")
 	}
 }
 

@@ -5,13 +5,13 @@ import (
 )
 
 func TestFloat64Unspecified(t *testing.T) {
-	if IsSpecified(Float64Unspecified) {
+	if isSpecified(Float64Unspecified) {
 		t.Errorf("Float64Unspecified should be unspecified, got %v", Float64Unspecified)
 	}
 }
 
 func TestFloat32Unspecified(t *testing.T) {
-	if IsSpecified(Float32Unspecified) {
+	if isSpecified(Float32Unspecified) {
 		t.Errorf("Float32Unspecified should be unspecified, got %v", Float32Unspecified)
 	}
 }
@@ -35,9 +35,9 @@ func TestTakeOrElse(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := TakeOrElse(tt.value, tt.defaultValue)
-			if IsUnspecified(tt.want) {
-				if IsSpecified(got) {
+			got := Float64Companion.TakeOrElse(tt.value, tt.defaultValue)
+			if isUnspecified(tt.want) {
+				if isSpecified(got) {
 					t.Errorf("TakeOrElse(%v, %v) = %v, want unspecified", tt.value, tt.defaultValue, got)
 				}
 			} else if got != tt.want {
@@ -62,9 +62,9 @@ func TestTakeOrElse_Float32(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := TakeOrElse(tt.value, tt.defaultValue)
-			if IsUnspecified(tt.want) {
-				if IsSpecified(got) {
+			got := Float32Companion.TakeOrElse(tt.value, tt.defaultValue)
+			if isUnspecified(tt.want) {
+				if isSpecified(got) {
 					t.Errorf("TakeOrElse(%v, %v) = %v, want unspecified", tt.value, tt.defaultValue, got)
 				}
 			} else if got != tt.want {

@@ -1,6 +1,10 @@
 package boolutils
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/zodimo/go-sentinel-helper/sentinel/companions"
+)
 
 // booleanValue is the internal enum for BooleanValue states
 type booleanValue int
@@ -12,12 +16,12 @@ const (
 )
 
 // BooleanValue is a type-safe wrapper for tri-state boolean (true/false/unspecified).
-// Uses Pattern 1-D from sentinel_pattern.md for zero-allocation value semantics.
+// Uses Pattern 2-D from sentinel_pattern.md for zero-allocation value semantics.
 type BooleanValue struct {
 	value booleanValue
 }
 
-// 1. Sentinel - BooleanValueUnspecified
+// 1. Sentinel
 var BooleanValueUnspecified = BooleanValue{value: booleanValueUnspecified}
 
 // Constructors (the ONLY way to create valid BooleanValues)
@@ -37,62 +41,41 @@ func BooleanValueFrom(b bool) BooleanValue {
 	return BooleanValueFalse()
 }
 
-// 2. IsSpecified - predicate (method on value receiver)
-func (bv BooleanValue) IsSpecified() bool {
+// --- Canonical operations (unexported; registered on the companion) ---
+
+// 1. Unspecified
+func unspecifiedBooleanValue() BooleanValue {
+	return BooleanValueUnspecified
+}
+
+// 2. IsSpecified
+func isSpecifiedBooleanValue(bv BooleanValue) bool {
 	return bv.value != booleanValueUnspecified
 }
 
-// IsUnspecified - convenience predicate
-func (bv BooleanValue) IsUnspecified() bool {
+// 3. IsUnspecified
+func isUnspecifiedBooleanValue(bv BooleanValue) bool {
 	return bv.value == booleanValueUnspecified
 }
 
-// IsTrue - check if value is explicitly true
-func (bv BooleanValue) IsTrue() bool {
-	return bv.value == booleanValueTrue
-}
-
-// IsFalse - check if value is explicitly false
-func (bv BooleanValue) IsFalse() bool {
-	return bv.value == booleanValueFalse
-}
-
-// Bool returns the bool value, defaulting to false if unspecified
-func (bv BooleanValue) Bool() bool {
-	return bv.value == booleanValueTrue
-}
-
-// BoolOrElse returns the bool value, or the default if unspecified
-func (bv BooleanValue) BoolOrElse(def bool) bool {
-	if bv.IsUnspecified() {
-		return def
-	}
-	return bv.Bool()
-}
-
-// 3. TakeOrElse - 2-param fallback (method on value receiver)
-func (bv BooleanValue) TakeOrElse(def BooleanValue) BooleanValue {
-	if bv.IsSpecified() {
+// 4. TakeOrElse
+func takeOrElseBooleanValue(bv, def BooleanValue) BooleanValue {
+	if bv.value != booleanValueUnspecified {
 		return bv
 	}
 	return def
 }
 
-// 4. Merge - composition merge (method on value receiver for atomic types)
-func (bv BooleanValue) Merge(other BooleanValue) BooleanValue {
-	if other.IsSpecified() {
-		return other
+// 5. Merge
+func mergeBooleanValue(a, b BooleanValue) BooleanValue {
+	if b.value != booleanValueUnspecified {
+		return b
 	}
-	return bv
+	return a
 }
 
-// MergeBooleanValue - package-level merge function
-func MergeBooleanValue(a, b BooleanValue) BooleanValue {
-	return a.Merge(b)
-}
-
-// 5. String - stringification (method on value receiver)
-func (bv BooleanValue) String() string {
+// 6. String
+func stringBooleanValue(bv BooleanValue) string {
 	switch bv.value {
 	case booleanValueTrue:
 		return "BooleanValue{true}"
@@ -103,53 +86,67 @@ func (bv BooleanValue) String() string {
 	}
 }
 
-// StringBooleanValue - package-level string function
-func StringBooleanValue(bv BooleanValue) string {
-	return bv.String()
+// 7. Same
+func sameBooleanValue(a, b BooleanValue) bool {
+	return a.value == b.value
 }
 
-// 6. Coalesce - N/A for value types (no nil possible)
-// Not applicable - BooleanValue is a value type
-
-// 7. Same - identity (for value types, uses == operator)
-func (bv BooleanValue) Same(other BooleanValue) bool {
-	return bv.value == other.value
+// 8. SemanticEqual
+func semanticEqualBooleanValue(a, b BooleanValue) bool {
+	return a.value == b.value
 }
 
-// SameBooleanValue - package-level same function
-func SameBooleanValue(a, b BooleanValue) bool {
-	return a.Same(b)
+// 9. Equal
+func equalBooleanValue(a, b BooleanValue) bool {
+	return a.value == b.value
 }
 
-// 8. SemanticEqual - semantic equality (for value types, same as Same)
-func (bv BooleanValue) SemanticEqual(other BooleanValue) bool {
-	return bv.value == other.value
-}
-
-// SemanticEqualBooleanValue - package-level semantic equal function
-func SemanticEqualBooleanValue(a, b BooleanValue) bool {
-	return a.SemanticEqual(b)
-}
-
-// 9. Equal - equality check (combines Same and SemanticEqual)
-func (bv BooleanValue) Equal(other BooleanValue) bool {
-	return bv.value == other.value
-}
-
-// EqualBooleanValue - package-level equal function
-func EqualBooleanValue(a, b BooleanValue) bool {
-	return a.Equal(b)
-}
-
-// 10. Copy - identity for immutable value types (just returns the value)
-func (bv BooleanValue) Copy() BooleanValue {
+// 10. Copy
+func copyBooleanValue(bv BooleanValue) BooleanValue {
 	return bv
 }
 
-// CopyBooleanValue - package-level copy function
-func CopyBooleanValue(bv BooleanValue) BooleanValue {
-	return bv.Copy()
+// BooleanValueCompanion is the ONLY public companion of this package.
+var BooleanValueCompanion = companions.NewScalarCompanion(
+	unspecifiedBooleanValue,
+	stringBooleanValue,
+	isSpecifiedBooleanValue,
+	isUnspecifiedBooleanValue,
+	takeOrElseBooleanValue,
+	mergeBooleanValue,
+	sameBooleanValue,
+	semanticEqualBooleanValue,
+	equalBooleanValue,
+	copyBooleanValue,
+)
+
+// --- Domain-specific convenience methods (beyond the companion) ---
+
+// IsSpecified reports whether the value is neither true nor false but has been set.
+func (bv BooleanValue) IsSpecified() bool { return isSpecifiedBooleanValue(bv) }
+
+// IsUnspecified reports whether the value is the tri-state "unknown".
+func (bv BooleanValue) IsUnspecified() bool { return isUnspecifiedBooleanValue(bv) }
+
+// IsTrue - check if value is explicitly true
+func (bv BooleanValue) IsTrue() bool { return bv.value == booleanValueTrue }
+
+// IsFalse - check if value is explicitly false
+func (bv BooleanValue) IsFalse() bool { return bv.value == booleanValueFalse }
+
+// Bool returns the bool value, defaulting to false if unspecified
+func (bv BooleanValue) Bool() bool { return bv.value == booleanValueTrue }
+
+// BoolOrElse returns the bool value, or the default if unspecified
+func (bv BooleanValue) BoolOrElse(def bool) bool {
+	if bv.IsUnspecified() {
+		return def
+	}
+	return bv.Bool()
 }
+
+// String implements fmt.Stringer.
+func (bv BooleanValue) String() string { return stringBooleanValue(bv) }
 
 // Format implements fmt.Formatter for custom formatting
 func (bv BooleanValue) Format(f fmt.State, verb rune) {

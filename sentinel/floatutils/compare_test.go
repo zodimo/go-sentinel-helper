@@ -125,8 +125,8 @@ func TestIsSpecified(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsSpecified(tt.f); got != tt.want {
-				t.Errorf("IsSpecified(%v) = %v, want %v", tt.f, got, tt.want)
+			if got := isSpecified(tt.f); got != tt.want {
+				t.Errorf("isSpecified(%v) = %v, want %v", tt.f, got, tt.want)
 			}
 		})
 	}
@@ -145,8 +145,8 @@ func TestIsSpecified_Float32(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsSpecified(tt.f); got != tt.want {
-				t.Errorf("IsSpecified(%v) = %v, want %v", tt.f, got, tt.want)
+			if got := isSpecified(tt.f); got != tt.want {
+				t.Errorf("isSpecified(%v) = %v, want %v", tt.f, got, tt.want)
 			}
 		})
 	}
@@ -168,8 +168,8 @@ func TestIsUnspecified(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsUnspecified(tt.f); got != tt.want {
-				t.Errorf("IsUnspecified(%v) = %v, want %v", tt.f, got, tt.want)
+			if got := isUnspecified(tt.f); got != tt.want {
+				t.Errorf("isUnspecified(%v) = %v, want %v", tt.f, got, tt.want)
 			}
 		})
 	}

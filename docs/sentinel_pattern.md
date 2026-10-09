@@ -3,9 +3,9 @@
 
 ---
 
-> **AGENT CONTRACT**: Every sentinel helper package exports **exactly one public value**: its
-> Companion. The ten canonical operations live behind that value, and every helper used by a
-> domain type is registered with the companion at construction time.
+> **AGENT CONTRACT**: Every sentinel helper package exports its **Companion(s)** as its
+> public surface. The ten canonical operations live behind that value, and every helper used
+> by a domain type is registered with the companion at construction time.
 >
 > 1. `Unspecified() T` – the sentinel (or its singleton)
 > 2. `IsSpecified(T) bool` – predicate
@@ -20,6 +20,14 @@
 
 > **Scalar companions** add `Copy(s T) T`; **Struct companions** add `Coalesce(ptr, def T) T`
 > and `Copy(s T, options ...func(T)) T`. All verification commands are in Section 9.
+>
+> A package may export **more than one** companion when the underlying type is generic over
+> widths — `floatutils` exports both `Float32Companion` and `Float64Companion`. Sentinel
+> *values* and primitive comparison helpers (e.g. `Float32Unspecified`, `Float32Equals`) may
+> remain exported so downstream packages can build their own companions on top. Genuine
+> domain predicates that are **not** among the ten (e.g. `IsInfinite`, `IsTrue`) may also be
+> exported — as a package-level func or a method on the value type — and must be documented
+> as extras.
 
 ---
 
@@ -214,32 +222,45 @@ import (
 
 type Dp float32
 
+// floatutils exposes concrete width companions; delegate to the float32 one.
+var f32 = floatutils.Float32Companion
+
 // 1. Sentinel
 var DpUnspecified = Dp(floatutils.Float32Unspecified)
 
 // 2. IsSpecified
-func isSpecifiedDp(d Dp) bool { return floatutils.IsSpecified(d) }
+func isSpecifiedDp(d Dp) bool { return f32.IsSpecified(float32(d)) }
 
 // 3. IsUnspecified
-func isUnspecifiedDp(d Dp) bool { return floatutils.IsUnspecified(d) }
+func isUnspecifiedDp(d Dp) bool { return f32.IsUnspecified(float32(d)) }
 
 // 4. TakeOrElse
-func takeOrElseDp(d, def Dp) Dp { return floatutils.TakeOrElse(d, def) }
+func takeOrElseDp(d, def Dp) Dp {
+	if !isSpecifiedDp(d) {
+		return def
+	}
+	return d
+}
 
 // 5. Merge
-func mergeDp(a, b Dp) Dp { return floatutils.Merge(a, b) }
+func mergeDp(a, b Dp) Dp {
+	if isSpecifiedDp(b) {
+		return b
+	}
+	return a
+}
 
 // 6. String
-func stringDp(d Dp) string { return fmt.Sprintf("Dp{%v}", d) }
+func stringDp(d Dp) string { return fmt.Sprintf("Dp{%v}", float32(d)) }
 
 // 7. Same
-func sameDp(a, b Dp) bool { return floatutils.Same(a, b) }
+func sameDp(a, b Dp) bool { return float32(a) == float32(b) }
 
 // 8. SemanticEqual
-func semanticEqualDp(a, b Dp) bool { return floatutils.SemanticEqual(a, b) }
+func semanticEqualDp(a, b Dp) bool { return f32.SemanticEqual(float32(a), float32(b)) }
 
 // 9. Equal
-func equalDp(a, b Dp) bool { return floatutils.Equal(a, b) }
+func equalDp(a, b Dp) bool { return semanticEqualDp(a, b) }
 
 // 10. Copy
 func copyDp(d Dp) Dp { return d }
@@ -258,6 +279,10 @@ var DpCompanion = companions.NewScalarCompanion(
 - `intutils.IntValueUnspecified` (`math.MinInt`) → for integers
 - `iota + sentinel` → for enums
 - `"\x00unspecified"` → for strings when `""` is meaningful (`stringutils`)
+
+**Extras beyond the ten**: `floatutils` also exports the comparison helper `IsInfinite`
+(a package-level generic func) and `Float32Equals`/`Float64Equals`. These are *not* part of
+the companion contract; they are documented extras.
 
 **Guarantees**: lives in `.rodata`, copied into register/stack → **zero heap bytes**.
 
@@ -296,11 +321,12 @@ func (c Color) Copy(opts ...ColorCopyOption) Color {
 
 	id := c.ColorSpaceId()
 	space := colorspace.Get(id)
+	f32 := floatutils.Float32Companion
 	return NewColor(
-		floatutils.TakeOrElse(o.Alpha, c.Alpha()),
-		floatutils.TakeOrElse(o.Red, c.Red()),
-		floatutils.TakeOrElse(o.Green, c.Green()),
-		floatutils.TakeOrElse(o.Blue, c.Blue()),
+		f32.TakeOrElse(o.Alpha, c.Alpha()),
+		f32.TakeOrElse(o.Red, c.Red()),
+		f32.TakeOrElse(o.Green, c.Green()),
+		f32.TakeOrElse(o.Blue, c.Blue()),
 		space,
 	)
 }
@@ -464,7 +490,7 @@ func copyShadow(s *Shadow, options ...func(*Shadow)) *Shadow {
 	return &Shadow{
 		Color:      opt.Color.TakeOrElse(s.Color),
 		Offset:     opt.Offset.TakeOrElse(s.Offset),
-		BlurRadius: floatutils.TakeOrElse(opt.BlurRadius, s.BlurRadius),
+		BlurRadius: floatutils.Float32Companion.TakeOrElse(opt.BlurRadius, s.BlurRadius),
 	}
 }
 ```
@@ -632,10 +658,13 @@ When the type cannot hold an actual `NaN`, reserve a **valid bit-pattern** that 
 type IntValue = int
 const IntValueUnspecified IntValue = math.MinInt   // 0x800...0
 
-// IntValueCompanion is a ScalarCompanion over these funcs.
+// The ten funcs are private; only the companion is exported.
+var IntValueCompanion = companions.NewScalarCompanion(/* the ten funcs */)
 ```
-`0` is valid → `math.MinInt` is the sentinel. Zero-allocation: the constant is a register
-literal.
+
+Use it as `intutils.IntValueCompanion.IsSpecified(v)`,
+`intutils.IntValueCompanion.Merge(a, b)`, etc. `0` is valid → `math.MinInt` is the sentinel.
+Zero-allocation: the constant is a register literal.
 
 ### 4-B `string` (`stringutils`)
 
@@ -666,8 +695,11 @@ var BooleanValueUnspecified = BooleanValue{value: booleanValueUnspecified}
 func BooleanValueFrom(b bool) BooleanValue { /* -> True/False */ }
 ```
 
-`boolutils` exposes methods (`IsSpecified`, `Bool`, `TakeOrElse`, ...) directly on the value
-type rather than a companion, because the wrapper is self-contained.
+`boolutils` registers a **ScalarCompanion** (`BooleanValueCompanion`) over the ten funcs,
+and *additionally* keeps a few domain-specific **methods** on the value type
+(`IsTrue`, `IsFalse`, `Bool`, `BoolOrElse`, `Format`) because that is the reason the wrapper
+exists. Canonical operations go through the companion:
+`boolutils.BooleanValueCompanion.TakeOrElse(a, b)`, `.Merge(a, b)`, `.Copy(v)`.
 
 ---
 
@@ -676,35 +708,61 @@ type rather than a companion, because the wrapper is self-contained.
 ```go
 // Scalar companion over a primitive
 type MyUnit float32
-var MyUnitUnspecified = MyUnit(floatutils.Float32Unspecified)
+var myUnitUnspecified = MyUnit(floatutils.Float32Unspecified)
 
-func isSpecifiedMyUnit(u MyUnit) bool   { return floatutils.IsSpecified(u) }
-func isUnspecifiedMyUnit(u MyUnit) bool { return floatutils.IsUnspecified(u) }
-func takeOrElseMyUnit(u, def MyUnit) MyUnit { return floatutils.TakeOrElse(u, def) }
-func mergeMyUnit(a, b MyUnit) MyUnit    { return floatutils.Merge(a, b) }
-func stringMyUnit(u MyUnit) string      { return fmt.Sprintf("MyUnit{%v}", u) }
-func sameMyUnit(a, b MyUnit) bool       { return floatutils.Same(a, b) }
-func semanticEqualMyUnit(a, b MyUnit) bool { return floatutils.SemanticEqual(a, b) }
-func equalMyUnit(a, b MyUnit) bool      { return floatutils.Equal(a, b) }
-func copyMyUnit(u MyUnit) MyUnit        { return u }
+func isSpecifiedMyUnit(u MyUnit) bool   { return floatutils.Float32Companion.IsSpecified(float32(u)) }
+func isUnspecifiedMyUnit(u MyUnit) bool { return floatutils.Float32Companion.IsUnspecified(float32(u)) }
+func takeOrElseMyUnit(u, def MyUnit) MyUnit {
+	if !isSpecifiedMyUnit(u) { return def }
+	return u
+}
+func mergeMyUnit(a, b MyUnit) MyUnit {
+	if isSpecifiedMyUnit(b) { return b }
+	return a
+}
+func stringMyUnit(u MyUnit) string { return fmt.Sprintf("MyUnit{%v}", float32(u)) }
+func sameMyUnit(a, b MyUnit) bool  { return float32(a) == float32(b) }
+func semanticEqualMyUnit(a, b MyUnit) bool { return sameMyUnit(a, b) }
+func equalMyUnit(a, b MyUnit) bool  { return sameMyUnit(a, b) }
+func copyMyUnit(u MyUnit) MyUnit    { return u }
 
+// The ONLY export:
 var MyUnitCompanion = companions.NewScalarCompanion(
-	func() MyUnit { return MyUnitUnspecified },
+	func() MyUnit { return myUnitUnspecified },
 	stringMyUnit, isSpecifiedMyUnit, isUnspecifiedMyUnit,
 	takeOrElseMyUnit, mergeMyUnit, sameMyUnit, semanticEqualMyUnit, equalMyUnit, copyMyUnit,
 )
 
 // Struct companion over a pointer type
 type MyStyle struct { field1 Color; field2 Dp }
-var MyStyleUnspecified = &MyStyle{field1: ColorUnspecified, field2: DpUnspecified}
+var myStyleUnspecified = &MyStyle{field1: ColorUnspecified, field2: DpUnspecified}
 
-func isSpecifiedMyStyle(s *MyStyle) bool { return s != nil && s != MyStyleUnspecified }
+func isSpecifiedMyStyle(s *MyStyle) bool { return s != nil && s != myStyleUnspecified }
 func coalesceMyStyle(ptr, def *MyStyle) *MyStyle {
 	if ptr == nil { return def }
 	return ptr
 }
 // ...remaining funcs...
+// The ONLY export:
 var MyStyleCompanion = companions.NewStructCompanion(/* 11 funcs */)
+```
+
+---
+
+## 5.1 Protobuf Wrappers (Struct Companions)
+
+`sentinel/protobufwrapper` wraps the nine `wrapperspb.*Value` pointer types. Each is a
+**StructCompanion** and its sentinel is the private empty singleton; nil is coalesced to it:
+
+```go
+c := protobufwrapper.StringValueCompanion
+
+c.IsSpecified(nil)                     // false → coalesced to Unspecified
+c.Coalesce(nil, c.Unspecified())       // the singleton
+c.Merge(nil, &wrapperspb.StringValue{Value: "x"}).Value // "x"
+c.Copy(&wrapperspb.StringValue{Value: "x"}, func(v *wrapperspb.StringValue) {
+    v.Value = "y"
+}).Value                                              // "y"  (deep copy for bytes)
 ```
 
 ---
