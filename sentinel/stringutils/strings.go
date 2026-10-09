@@ -1,30 +1,31 @@
 package stringutils
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/zodimo/go-sentinel-helper/sentinel/companions"
+)
 
 type StringValue = string
 
-// 1. Sentinel - StringValueUnspecified
+// 1. Sentinel - stringValueUnspecified
 // StringValue is the type for sentinel string pattern.
 // The sentinel "\x00unspecified" is used when empty string is meaningful.
-const StringValueUnspecified StringValue = "\x00unspecified"
-
-// Deprecated: Use StringValueUnspecified instead
-const StringUnspecified StringValue = StringValueUnspecified
+const stringValueUnspecified StringValue = "\x00unspecified"
 
 // 2. IsSpecified - predicate (package-level function)
-func IsSpecifiedString(s StringValue) bool {
-	return s != StringValueUnspecified
+func isSpecifiedString(s StringValue) bool {
+	return s != stringValueUnspecified
 }
 
-// IsUnspecifiedString - convenience predicate
-func IsUnspecifiedString(s StringValue) bool {
-	return s == StringValueUnspecified
+// isUnspecifiedString - convenience predicate
+func isUnspecifiedString(s StringValue) bool {
+	return s == stringValueUnspecified
 }
 
 // 3. TakeOrElse - 2-param fallback (package-level function)
-func TakeOrElseString(a, b StringValue) StringValue {
-	if a != StringValueUnspecified {
+func takeOrElseString(a, b StringValue) StringValue {
+	if a != stringValueUnspecified {
 		return a
 	}
 	return b
@@ -32,16 +33,16 @@ func TakeOrElseString(a, b StringValue) StringValue {
 
 // 4. Merge - composition merge (package-level function)
 // Prefers incoming specified values over current values
-func MergeString(a, b StringValue) StringValue {
-	if b != StringValueUnspecified {
+func mergeString(a, b StringValue) StringValue {
+	if b != stringValueUnspecified {
 		return b
 	}
 	return a
 }
 
 // 5. String - stringification (package-level function)
-func StringString(s StringValue) string {
-	if s == StringValueUnspecified {
+func stringString(s StringValue) string {
+	if s == stringValueUnspecified {
 		return "StringValue{Unspecified}"
 	}
 	return fmt.Sprintf("StringValue{%q}", s)
@@ -51,22 +52,35 @@ func StringString(s StringValue) string {
 // Not applicable
 
 // 7. Same - identity (package-level function)
-func SameString(a, b StringValue) bool {
+func sameString(a, b StringValue) bool {
 	return a == b
 }
 
 // 8. SemanticEqual - semantic equality (package-level function)
 // For strings, this is the same as Same
-func SemanticEqualString(a, b StringValue) bool {
+func semanticEqualString(a, b StringValue) bool {
 	return a == b
 }
 
 // 9. Equal - equality check (package-level function)
-func EqualString(a, b StringValue) bool {
+func equalString(a, b StringValue) bool {
 	return a == b
 }
 
 // 10. Copy - identity for immutable value types (package-level function)
-func CopyString(s StringValue) StringValue {
+func copyString(s StringValue) StringValue {
 	return s
 }
+
+var StringsCompanion = companions.NewScalarCompanion(
+	func() StringValue { return stringValueUnspecified },
+	stringString,
+	isSpecifiedString,
+	isUnspecifiedString,
+	takeOrElseString,
+	mergeString,
+	sameString,
+	semanticEqualString,
+	equalString,
+	copyString,
+)
