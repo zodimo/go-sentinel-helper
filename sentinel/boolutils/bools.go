@@ -6,31 +6,31 @@ import (
 	"github.com/zodimo/go-sentinel-helper/sentinel/companions"
 )
 
-// booleanValue is the internal enum for BooleanValue states
-type booleanValue int
+// booleanTriValue is the internal enum for BooleanValue states
+type booleanTriValue int
 
 const (
-	booleanValueUnspecified booleanValue = iota
-	booleanValueTrue
-	booleanValueFalse
+	booleanTriValueUnspecified booleanTriValue = iota
+	booleanTriValueTrue
+	booleanTriValueFalse
 )
 
 // BooleanValue is a type-safe wrapper for tri-state boolean (true/false/unspecified).
 // Uses Pattern 2-D from sentinel_pattern.md for zero-allocation value semantics.
 type BooleanValue struct {
-	value booleanValue
+	value booleanTriValue
 }
 
 // 1. Sentinel
-var BooleanValueUnspecified = BooleanValue{value: booleanValueUnspecified}
+var booleanValueUnspecified = BooleanValue{value: booleanTriValueUnspecified}
 
 // Constructors (the ONLY way to create valid BooleanValues)
 func BooleanValueTrue() BooleanValue {
-	return BooleanValue{value: booleanValueTrue}
+	return BooleanValue{value: booleanTriValueTrue}
 }
 
 func BooleanValueFalse() BooleanValue {
-	return BooleanValue{value: booleanValueFalse}
+	return BooleanValue{value: booleanTriValueFalse}
 }
 
 // BooleanValueFrom creates a BooleanValue from a bool
@@ -45,22 +45,22 @@ func BooleanValueFrom(b bool) BooleanValue {
 
 // 1. Unspecified
 func unspecifiedBooleanValue() BooleanValue {
-	return BooleanValueUnspecified
+	return booleanValueUnspecified
 }
 
 // 2. IsSpecified
 func isSpecifiedBooleanValue(bv BooleanValue) bool {
-	return bv.value != booleanValueUnspecified
+	return bv.value != booleanTriValueUnspecified
 }
 
 // 3. IsUnspecified
 func isUnspecifiedBooleanValue(bv BooleanValue) bool {
-	return bv.value == booleanValueUnspecified
+	return bv.value == booleanTriValueUnspecified
 }
 
 // 4. TakeOrElse
 func takeOrElseBooleanValue(bv, def BooleanValue) BooleanValue {
-	if bv.value != booleanValueUnspecified {
+	if bv.value != booleanTriValueUnspecified {
 		return bv
 	}
 	return def
@@ -68,7 +68,7 @@ func takeOrElseBooleanValue(bv, def BooleanValue) BooleanValue {
 
 // 5. Merge
 func mergeBooleanValue(a, b BooleanValue) BooleanValue {
-	if b.value != booleanValueUnspecified {
+	if b.value != booleanTriValueUnspecified {
 		return b
 	}
 	return a
@@ -77,9 +77,9 @@ func mergeBooleanValue(a, b BooleanValue) BooleanValue {
 // 6. String
 func stringBooleanValue(bv BooleanValue) string {
 	switch bv.value {
-	case booleanValueTrue:
+	case booleanTriValueTrue:
 		return "BooleanValue{true}"
-	case booleanValueFalse:
+	case booleanTriValueFalse:
 		return "BooleanValue{false}"
 	default:
 		return "BooleanValue{Unspecified}"
@@ -129,13 +129,13 @@ func (bv BooleanValue) IsSpecified() bool { return isSpecifiedBooleanValue(bv) }
 func (bv BooleanValue) IsUnspecified() bool { return isUnspecifiedBooleanValue(bv) }
 
 // IsTrue - check if value is explicitly true
-func (bv BooleanValue) IsTrue() bool { return bv.value == booleanValueTrue }
+func (bv BooleanValue) IsTrue() bool { return bv.value == booleanTriValueTrue }
 
 // IsFalse - check if value is explicitly false
-func (bv BooleanValue) IsFalse() bool { return bv.value == booleanValueFalse }
+func (bv BooleanValue) IsFalse() bool { return bv.value == booleanTriValueFalse }
 
 // Bool returns the bool value, defaulting to false if unspecified
-func (bv BooleanValue) Bool() bool { return bv.value == booleanValueTrue }
+func (bv BooleanValue) Bool() bool { return bv.value == booleanTriValueTrue }
 
 // BoolOrElse returns the bool value, or the default if unspecified
 func (bv BooleanValue) BoolOrElse(def bool) bool {

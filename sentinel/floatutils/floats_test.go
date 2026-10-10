@@ -13,10 +13,10 @@ func TestMerge(t *testing.T) {
 	if got := c32.Merge(float32(1.0), float32(2.0)); got != 2.0 {
 		t.Errorf("Merge(float32) preferred value mismatch: got %v, want 2.0", got)
 	}
-	if got := c32.Merge(float32(1.0), Float32Unspecified); got != 1.0 {
+	if got := c32.Merge(float32(1.0), float32Unspecified); got != 1.0 {
 		t.Errorf("Merge(float32) with unspecified mismatch: got %v, want 1.0", got)
 	}
-	if got := c32.Merge(Float32Unspecified, float32(2.0)); got != 2.0 {
+	if got := c32.Merge(float32Unspecified, float32(2.0)); got != 2.0 {
 		t.Errorf("Merge(float32) with first unspecified mismatch: got %v, want 2.0", got)
 	}
 
@@ -24,7 +24,7 @@ func TestMerge(t *testing.T) {
 	if got := c64.Merge(1.0, 2.0); got != 2.0 {
 		t.Errorf("Merge(float64) preferred value mismatch: got %v, want 2.0", got)
 	}
-	if got := c64.Merge(1.0, Float64Unspecified); got != 1.0 {
+	if got := c64.Merge(1.0, float64Unspecified); got != 1.0 {
 		t.Errorf("Merge(float64) with unspecified mismatch: got %v, want 1.0", got)
 	}
 }
@@ -34,7 +34,7 @@ func TestString(t *testing.T) {
 	c64 := Float64Companion
 
 	// Float32
-	if got := c32.String(Float32Unspecified); got != "float32{Unspecified}" {
+	if got := c32.String(float32Unspecified); got != "float32{Unspecified}" {
 		t.Errorf("String(float32 unspecified) = %q, want float32{Unspecified}", got)
 	}
 	if got := c32.String(float32(1.23)); got != "float32{1.23}" {
@@ -42,7 +42,7 @@ func TestString(t *testing.T) {
 	}
 
 	// Float64
-	if got := c64.String(Float64Unspecified); got != "float64{Unspecified}" {
+	if got := c64.String(float64Unspecified); got != "float64{Unspecified}" {
 		t.Errorf("String(float64 unspecified) = %q, want float64{Unspecified}", got)
 	}
 	if got := c64.String(1.23); got != "float64{1.23}" {
@@ -61,7 +61,7 @@ func TestSame(t *testing.T) {
 	if c32.Same(float32(1.0), float32(2.0)) {
 		t.Error("Same(float32 1.0, 2.0) should be false")
 	}
-	if !c32.Same(Float32Unspecified, Float32Unspecified) {
+	if !c32.Same(float32Unspecified, float32Unspecified) {
 		t.Error("Same(Float32Unspecified, Float32Unspecified) should be true")
 	}
 
@@ -69,7 +69,7 @@ func TestSame(t *testing.T) {
 	if !c64.Same(1.0, 1.0) {
 		t.Error("Same(float64 1.0, 1.0) should be true")
 	}
-	if !c64.Same(Float64Unspecified, Float64Unspecified) {
+	if !c64.Same(float64Unspecified, float64Unspecified) {
 		t.Error("Same(Float64Unspecified, Float64Unspecified) should be true")
 	}
 }
@@ -91,10 +91,10 @@ func TestSemanticEqual(t *testing.T) {
 		t.Error("SemanticEqual(float32) outside epsilon should be false")
 	}
 
-	if !c32.SemanticEqual(Float32Unspecified, Float32Unspecified) {
+	if !c32.SemanticEqual(float32Unspecified, float32Unspecified) {
 		t.Error("SemanticEqual(Float32Unspecified, Float32Unspecified) should be true")
 	}
-	if c32.SemanticEqual(float32(1.0), Float32Unspecified) {
+	if c32.SemanticEqual(float32(1.0), float32Unspecified) {
 		t.Error("SemanticEqual(specified, unspecified) should be false")
 	}
 
@@ -132,7 +132,7 @@ func TestInfinite(t *testing.T) {
 	if IsInfinite(1.0) {
 		t.Error("IsInfinite(1.0) should be false")
 	}
-	if IsInfinite(Float64Unspecified) {
+	if IsInfinite(float64Unspecified) {
 		t.Error("IsInfinite(NaN) should be false")
 	}
 }

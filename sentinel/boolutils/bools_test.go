@@ -14,7 +14,7 @@ func TestBooleanValue_Constructors(t *testing.T) {
 		wantBool bool
 		wantSpec bool
 	}{
-		{"Unspecified", BooleanValueUnspecified, false, false},
+		{"Unspecified", booleanValueUnspecified, false, false},
 		{"True", BooleanValueTrue(), true, true},
 		{"False", BooleanValueFalse(), false, true},
 		{"From(true)", BooleanValueFrom(true), true, true},
@@ -44,7 +44,7 @@ func TestBooleanValue_Constructors(t *testing.T) {
 func TestBooleanValue_Predicates(t *testing.T) {
 	vTrue := BooleanValueTrue()
 	vFalse := BooleanValueFalse()
-	vUnspec := BooleanValueUnspecified
+	vUnspec := booleanValueUnspecified
 
 	if !vTrue.IsTrue() {
 		t.Error("IsTrue() failed for True value")
@@ -78,8 +78,8 @@ func TestBooleanValue_BoolOrElse(t *testing.T) {
 		{BooleanValueTrue(), true, true},
 		{BooleanValueFalse(), false, false},
 		{BooleanValueFalse(), true, false},
-		{BooleanValueUnspecified, true, true},
-		{BooleanValueUnspecified, false, false},
+		{booleanValueUnspecified, true, true},
+		{booleanValueUnspecified, false, false},
 	}
 
 	for _, tt := range tests {
@@ -92,7 +92,7 @@ func TestBooleanValue_BoolOrElse(t *testing.T) {
 func TestBooleanValue_TakeOrElse(t *testing.T) {
 	vTrue := BooleanValueTrue()
 	vFalse := BooleanValueFalse()
-	vMaybe := BooleanValueUnspecified
+	vMaybe := booleanValueUnspecified
 
 	// If specified, should return itself
 	if got := c.TakeOrElse(vTrue, vFalse); !c.Equal(got, vTrue) {
@@ -111,7 +111,7 @@ func TestBooleanValue_TakeOrElse(t *testing.T) {
 func TestBooleanValue_Merge(t *testing.T) {
 	vTrue := BooleanValueTrue()
 	vFalse := BooleanValueFalse()
-	vUnspec := BooleanValueUnspecified
+	vUnspec := booleanValueUnspecified
 
 	// Merge(current, incoming) -> incoming if specified, else current
 
@@ -139,7 +139,7 @@ func TestBooleanValue_String(t *testing.T) {
 	}{
 		{BooleanValueTrue(), "BooleanValue{true}"},
 		{BooleanValueFalse(), "BooleanValue{false}"},
-		{BooleanValueUnspecified, "BooleanValue{Unspecified}"},
+		{booleanValueUnspecified, "BooleanValue{Unspecified}"},
 	}
 
 	for _, tt := range tests {
@@ -157,8 +157,8 @@ func TestBooleanValue_Equality(t *testing.T) {
 	t1 := BooleanValueTrue()
 	t2 := BooleanValueTrue()
 	f1 := BooleanValueFalse()
-	u1 := BooleanValueUnspecified
-	u2 := BooleanValueUnspecified
+	u1 := booleanValueUnspecified
+	u2 := booleanValueUnspecified
 
 	if !c.Equal(t1, t2) {
 		t.Error("True should equal True")

@@ -7,10 +7,10 @@ import (
 func TestIntValue(t *testing.T) {
 	c := IntValueCompanion
 
-	if c.IsSpecified(IntValueUnspecified) {
+	if c.IsSpecified(intValueUnspecified) {
 		t.Error("IntValueUnspecified should not be specified")
 	}
-	if !c.IsUnspecified(IntValueUnspecified) {
+	if !c.IsUnspecified(intValueUnspecified) {
 		t.Error("IntValueUnspecified should be unspecified")
 	}
 
@@ -26,7 +26,7 @@ func TestIntValue(t *testing.T) {
 	if got := c.TakeOrElse(val, 100); got != val {
 		t.Errorf("TakeOrElse(42, 100) = %d; want 42", got)
 	}
-	if got := c.TakeOrElse(IntValueUnspecified, 100); got != 100 {
+	if got := c.TakeOrElse(intValueUnspecified, 100); got != 100 {
 		t.Errorf("TakeOrElse(Unspecified, 100) = %d; want 100", got)
 	}
 
@@ -34,15 +34,15 @@ func TestIntValue(t *testing.T) {
 	if got := c.Merge(10, 20); got != 20 {
 		t.Errorf("Merge(10, 20) = %d; want 20", got)
 	}
-	if got := c.Merge(10, IntValueUnspecified); got != 10 {
+	if got := c.Merge(10, intValueUnspecified); got != 10 {
 		t.Errorf("Merge(10, Unspecified) = %d; want 10", got)
 	}
-	if got := c.Merge(IntValueUnspecified, 20); got != 20 {
+	if got := c.Merge(intValueUnspecified, 20); got != 20 {
 		t.Errorf("Merge(Unspecified, 20) = %d; want 20", got)
 	}
 
 	// String
-	if got := c.String(IntValueUnspecified); got != "IntValue{Unspecified}" {
+	if got := c.String(intValueUnspecified); got != "IntValue{Unspecified}" {
 		t.Errorf("String(Unspecified) = %q; want 'IntValue{Unspecified}'", got)
 	}
 	if got := c.String(42); got != "IntValue{42}" {

@@ -23,24 +23,24 @@ type IntValue = int
 // 10. Copy (scalar: identity)
 // END_CONTRACT
 
-// 1. Sentinel - IntValueUnspecified
+// 1. Sentinel - intValueUnspecified
 // IntValue is the type for sentinel int pattern.
 // The sentinel math.MinInt is used, so math.MinInt cannot be a valid value.
-const IntValueUnspecified IntValue = math.MinInt
+const intValueUnspecified IntValue = math.MinInt
 
 // 2. IsSpecified - predicate
 func isSpecifiedIntValue(i IntValue) bool {
-	return i != IntValueUnspecified
+	return i != intValueUnspecified
 }
 
 // 3. IsUnspecified - inverse predicate
 func isUnspecifiedIntValue(i IntValue) bool {
-	return i == IntValueUnspecified
+	return i == intValueUnspecified
 }
 
 // 4. TakeOrElse - 2-param fallback
 func takeOrElseIntValue(a, b IntValue) IntValue {
-	if a != IntValueUnspecified {
+	if a != intValueUnspecified {
 		return a
 	}
 	return b
@@ -48,7 +48,7 @@ func takeOrElseIntValue(a, b IntValue) IntValue {
 
 // 5. Merge - composition merge (prefers incoming specified values)
 func mergeIntValue(a, b IntValue) IntValue {
-	if b != IntValueUnspecified {
+	if b != intValueUnspecified {
 		return b
 	}
 	return a
@@ -56,7 +56,7 @@ func mergeIntValue(a, b IntValue) IntValue {
 
 // 6. String - stringification
 func stringIntValue(i IntValue) string {
-	if i == IntValueUnspecified {
+	if i == intValueUnspecified {
 		return "IntValue{Unspecified}"
 	}
 	return fmt.Sprintf("IntValue{%d}", i)
@@ -84,7 +84,7 @@ func copyIntValue(i IntValue) IntValue {
 
 // IntValueCompanion is the ONLY public symbol of this package.
 var IntValueCompanion = companions.NewScalarCompanion(
-	func() IntValue { return IntValueUnspecified },
+	func() IntValue { return intValueUnspecified },
 	stringIntValue,
 	isSpecifiedIntValue,
 	isUnspecifiedIntValue,

@@ -5,14 +5,14 @@ import (
 )
 
 func TestFloat64Unspecified(t *testing.T) {
-	if isSpecified(Float64Unspecified) {
-		t.Errorf("Float64Unspecified should be unspecified, got %v", Float64Unspecified)
+	if isSpecified(float64Unspecified) {
+		t.Errorf("Float64Unspecified should be unspecified, got %v", float64Unspecified)
 	}
 }
 
 func TestFloat32Unspecified(t *testing.T) {
-	if isSpecified(Float32Unspecified) {
-		t.Errorf("Float32Unspecified should be unspecified, got %v", Float32Unspecified)
+	if isSpecified(float32Unspecified) {
+		t.Errorf("Float32Unspecified should be unspecified, got %v", float32Unspecified)
 	}
 }
 
@@ -24,8 +24,8 @@ func TestTakeOrElse(t *testing.T) {
 		want         float64
 	}{
 		{"specified value returned", 5.0, 10.0, 5.0},
-		{"unspecified float64 returns default", Float64Unspecified, 10.0, 10.0},
-		{"unspecified float32 returns default", float64(Float32Unspecified), 10.0, 10.0},
+		{"unspecified float64 returns default", float64Unspecified, 10.0, 10.0},
+		{"unspecified float32 returns default", float64(float32Unspecified), 10.0, 10.0},
 
 		{"zero is specified", 0.0, 10.0, 0.0},
 		{"negative is specified", -5.0, 10.0, -5.0},
@@ -55,7 +55,7 @@ func TestTakeOrElse_Float32(t *testing.T) {
 		want         float32
 	}{
 		{"specified value returned", 5.0, 10.0, 5.0},
-		{"unspecified returns default", Float32Unspecified, 10.0, 10.0},
+		{"unspecified returns default", float32Unspecified, 10.0, 10.0},
 		{"zero is specified", 0.0, 10.0, 0.0},
 		{"negative is specified", -5.0, 10.0, -5.0},
 	}

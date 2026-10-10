@@ -12,8 +12,8 @@ const (
 	Float32EqualityThreshold float32 = 1e-6
 )
 
-var Float64Unspecified = math.NaN()
-var Float32Unspecified = float32(math.NaN())
+var float64Unspecified = math.NaN()
+var float32Unspecified = float32(math.NaN())
 
 var Float32Infinite = float32(math.Inf(1))
 var FloatInfinite = math.Inf(1)
@@ -115,7 +115,7 @@ func copyValue[T Float](f T) T {
 
 // Float32Companion is the scalar companion for float32 sentinels.
 var Float32Companion = companions.NewScalarCompanion(
-	func() float32 { return Float32Unspecified },
+	func() float32 { return float32Unspecified },
 	func(f float32) string { return stringOf(f) },
 	func(f float32) bool { return isSpecified(f) },
 	func(f float32) bool { return isUnspecified(f) },
@@ -129,7 +129,7 @@ var Float32Companion = companions.NewScalarCompanion(
 
 // Float64Companion is the scalar companion for float64 sentinels.
 var Float64Companion = companions.NewScalarCompanion(
-	func() float64 { return Float64Unspecified },
+	func() float64 { return float64Unspecified },
 	func(f float64) string { return stringOf(f) },
 	func(f float64) bool { return isSpecified(f) },
 	func(f float64) bool { return isUnspecified(f) },
