@@ -23,11 +23,12 @@
 >
 > A package may export **more than one** companion when the underlying type is generic over
 > widths — `floatutils` exports both `Float32Companion` and `Float64Companion`. Sentinel
-> *values* and primitive comparison helpers (e.g. `Float32Unspecified`, `Float32Equals`) may
-> remain exported so downstream packages can build their own companions on top. Genuine
-> domain predicates that are **not** among the ten (e.g. `IsInfinite`, `IsTrue`) may also be
-> exported — as a package-level func or a method on the value type — and must be documented
-> as extras.
+> *values* are **never** exported — each lives as an unexported package-level symbol and is
+> reachable only through `Companion.Unspecified()`. This holds for every package built on the
+> pattern, including one you define yourself: do not add an exported `XUnspecified` var, const,
+> or func as a convenience. Genuine domain predicates that are **not** among the ten (e.g.
+> `IsInfinite`, `IsTrue`) may also be exported — as a package-level func or a method on the
+> value type — and must be documented as extras.
 
 ---
 
@@ -42,12 +43,16 @@
 
 ## 0. Quick Glance Cheat-Sheet
 
-| Type Family | Go Declaration | Companion Kind | Sentinel | Is-Specified Check | Alloc/Cost | Use-Case |
-|-------------|----------------|----------------|----------|--------------------|------------|----------|
-| **1-A Primitive** | `type Dp float32` | Scalar | `var DpUnspecified = Dp(NaN)` | `c.IsSpecified(d)` | **0 B / 2 ns** | dp, simple units |
-| **1-B Packed Primitive** | `type Color uint64` | Scalar (+`Copy` options) | `const ColorUnspecified = 0` | `c.IsSpecified(col)` | **0 B / 2 ns** | color with copy options |
-| **1-C Complex** | `type TextStyle struct{...}` | Struct (pointer) | `var TextStyleUnspecified = &TextStyle{...}` | `c.IsSpecified(s)` | **0 B if nil / 24 B if custom** | style, modifier |
-| **1-D Type-Safe Wrapper** | `type TextUnit struct{ packed int64 }` | Scalar | `var TextUnitUnspecified = TextUnit{...}` | `c.IsSpecified(tu)` | **0 B / 2 ns** | packed unit with type safety |
+| Type Family | Go Declaration | Companion Kind | Sentinel (unexported) | Is-Specified Check | Alloc/Cost | Use-Case |
+|-------------|----------------|----------------|-----------------------|--------------------|------------|----------|
+| **1-A Primitive** | `type Dp float32` | Scalar | `var dpUnspecified = Dp(NaN)` | `c.IsSpecified(d)` | **0 B / 2 ns** | dp, simple units |
+| **1-B Packed Primitive** | `type Color uint64` | Scalar (+`Copy` options) | `const colorUnspecified = 0` | `c.IsSpecified(col)` | **0 B / 2 ns** | color with copy options |
+| **1-C Complex** | `type TextStyle struct{...}` | Struct (pointer) | `var textStyleUnspecified = &TextStyle{...}` | `c.IsSpecified(s)` | **0 B if nil / 24 B if custom** | style, modifier |
+| **1-D Type-Safe Wrapper** | `type TextUnit struct{ packed int64 }` | Scalar | `var textUnitUnspecified = TextUnit{...}` | `c.IsSpecified(tu)` | **0 B / 2 ns** | packed unit with type safety |
+
+Every sentinel above is **unexported**. Callers obtain it only via `c.Unspecified()`; the names
+are shown lowercase to make clear there is no exported `DpUnspecified` / `ColorUnspecified` /
+`TextStyleUnspecified` / `TextUnitUnspecified` to reach for.
 
 ---
 
@@ -225,8 +230,8 @@ type Dp float32
 // floatutils exposes concrete width companions; delegate to the float32 one.
 var f32 = floatutils.Float32Companion
 
-// 1. Sentinel
-var DpUnspecified = Dp(floatutils.Float32Unspecified)
+// 1. Sentinel — unexported; only reachable via DpCompanion.Unspecified()
+var dpUnspecified = Dp(f32.Unspecified())
 
 // 2. IsSpecified
 func isSpecifiedDp(d Dp) bool { return f32.IsSpecified(float32(d)) }
@@ -267,7 +272,7 @@ func copyDp(d Dp) Dp { return d }
 
 // The only export:
 var DpCompanion = companions.NewScalarCompanion(
-	func() Dp { return DpUnspecified },
+	func() Dp { return dpUnspecified },
 	stringDp, isSpecifiedDp, isUnspecifiedDp,
 	takeOrElseDp, mergeDp, sameDp, semanticEqualDp, equalDp, copyDp,
 )
@@ -275,8 +280,8 @@ var DpCompanion = companions.NewScalarCompanion(
 
 **Sentinel choice guide**
 - `0` → OK when `0` is rare
-- `floatutils.Float32Unspecified` / `floatutils.Float64Unspecified` (NaN) → use when `0` is common
-- `intutils.IntValueUnspecified` (`math.MinInt`) → for integers
+- `Float32Companion.Unspecified()` / `Float64Companion.Unspecified()` (NaN) → use when `0` is common
+- `IntValueCompanion.Unspecified()` (`math.MinInt`) → for integers
 - `iota + sentinel` → for enums
 - `"\x00unspecified"` → for strings when `""` is meaningful (`stringutils`)
 
@@ -309,11 +314,12 @@ func CopyWithAlpha(alpha float32) ColorCopyOption {
 
 // Copy creates a new color with modified components.
 func (c Color) Copy(opts ...ColorCopyOption) Color {
+	f32 := floatutils.Float32Companion
 	o := ColorCopyOptions{
-		Alpha: floatutils.Float32Unspecified,
-		Red:   floatutils.Float32Unspecified,
-		Green: floatutils.Float32Unspecified,
-		Blue:  floatutils.Float32Unspecified,
+		Alpha: f32.Unspecified(),
+		Red:   f32.Unspecified(),
+		Green: f32.Unspecified(),
+		Blue:  f32.Unspecified(),
 	}
 	for _, opt := range opts {
 		opt(&o)
@@ -321,7 +327,6 @@ func (c Color) Copy(opts ...ColorCopyOption) Color {
 
 	id := c.ColorSpaceId()
 	space := colorspace.Get(id)
-	f32 := floatutils.Float32Companion
 	return NewColor(
 		f32.TakeOrElse(o.Alpha, c.Alpha()),
 		f32.TakeOrElse(o.Red, c.Red()),
@@ -363,8 +368,8 @@ type TextUnit struct {
 	packed int64
 }
 
-// 1. Sentinel — value, not pointer
-var TextUnitUnspecified = TextUnit{packed: packRaw(int64(TextUnitTypeUnspecified), float32(math.NaN()))}
+// 1. Sentinel — value, not pointer; unexported (reach it via TextUnitCompanion.Unspecified())
+var textUnitUnspecified = TextUnit{packed: packRaw(int64(TextUnitTypeUnspecified), float32(math.NaN()))}
 
 func packRaw(unitType int64, v float32) int64 {
 	valBits := int64(math.Float32bits(v)) & 0xFFFFFFFF
@@ -429,7 +434,7 @@ func equalTextUnit(a, b TextUnit) bool {
 func copyTextUnit(tu TextUnit) TextUnit { return tu }
 
 var TextUnitCompanion = companions.NewScalarCompanion(
-	func() TextUnit { return TextUnitUnspecified },
+	func() TextUnit { return textUnitUnspecified },
 	stringTextUnit, isSpecifiedTextUnit, isUnspecifiedTextUnit,
 	takeOrElseTextUnit, mergeTextUnit, sameTextUnit, semanticEqualTextUnit, equalTextUnit, copyTextUnit,
 )
@@ -483,7 +488,7 @@ type Shadow struct {
 
 // Options mutate a scratch copy; unspecified fields fall back to the source.
 func copyShadow(s *Shadow, options ...func(*Shadow)) *Shadow {
-	opt := *ShadowUnspecified // start from the sentinel values
+	opt := *shadowUnspecified // start from the sentinel values
 	for _, option := range options {
 		option(&opt)
 	}
@@ -505,13 +510,17 @@ Register `copyShadow` as the `Copy` func of `ShadowCompanion`; call it as
 | Level | Value | Meaning | Typical Use |
 |-------|-------|---------|-------------|
 | **Object absent** | `nil` | "No style provided" | parameter default → coalesced to unspecified |
-| **Object present, all fields deferred** | `TextStyleUnspecified` | "Use theme for everything" | partial merge base |
-| **Field absent** | `DpUnspecified` (inside struct) | "Use ambient for this field" | field-level override |
+| **Object present, all fields deferred** | `textStyleUnspecified` (unexported) | "Use theme for everything" | partial merge base |
+| **Field absent** | `dpUnspecified` (inside struct, unexported) | "Use ambient for this field" | field-level override |
 
-**Example**:
+Uppercase spellings (`TextStyleUnspecified`) name the concept here, not exported identifiers —
+the only public way to reach any sentinel is `XCompanion.Unspecified()`.
+
+**Example** (callers pass `nil` or a real style; they reach the singleton through the companion,
+never through a constant):
 ```go
 Text("hi")                                                      // nil → use theme 100 %
-Text("hi", WithTextStyle(TextStyleUnspecified))                 // singleton → use theme 100 %
+Text("hi", WithTextStyle(TextStyleCompanion.Unspecified()))     // singleton → use theme 100 %
 Text("hi", WithTextStyle(&TextStyle{fontSize: 20}))             // partial → theme color + 20 sp
 ```
 
@@ -529,16 +538,16 @@ type TextStyle struct {
 	fontWeight FontWeight
 }
 
-// 1. Sentinel — a singleton
-var TextStyleUnspecified = &TextStyle{
-	color:      ColorUnspecified,
-	fontSize:   DpUnspecified,
-	fontWeight: FontWeightUnspecified,
+// 1. Sentinel — a singleton, unexported (reach it via TextStyleCompanion.Unspecified())
+var textStyleUnspecified = &TextStyle{
+	color:      colorUnspecified,
+	fontSize:   dpUnspecified,
+	fontWeight: fontWeightUnspecified,
 }
 
 // 2. IsSpecified
 func isSpecifiedTextStyle(s *TextStyle) bool {
-	return s != nil && s != TextStyleUnspecified
+	return s != nil && s != textStyleUnspecified
 }
 
 // 3. IsUnspecified
@@ -554,11 +563,11 @@ func takeOrElseTextStyle(s, def *TextStyle) *TextStyle {
 
 // 5. Merge — nil-safe, field-by-field
 func mergeTextStyle(a, b *TextStyle) *TextStyle {
-	a = coalesceTextStyle(a, TextStyleUnspecified)
-	b = coalesceTextStyle(b, TextStyleUnspecified)
+	a = coalesceTextStyle(a, textStyleUnspecified)
+	b = coalesceTextStyle(b, textStyleUnspecified)
 
-	if a == TextStyleUnspecified { return b }
-	if b == TextStyleUnspecified { return a }
+	if a == textStyleUnspecified { return b }
+	if b == textStyleUnspecified { return a }
 
 	return &TextStyle{
 		color:      mergeColor(b.color, a.color),
@@ -581,15 +590,15 @@ func stringTextStyle(s *TextStyle) string {
 // 7. Same — identity
 func sameTextStyle(a, b *TextStyle) bool {
 	if a == nil && b == nil { return true }
-	if a == nil { return b == TextStyleUnspecified }
-	if b == nil { return a == TextStyleUnspecified }
+	if a == nil { return b == textStyleUnspecified }
+	if b == nil { return a == textStyleUnspecified }
 	return a == b
 }
 
 // 8. SemanticEqual — nil-safe, field-by-field
 func semanticEqualTextStyle(a, b *TextStyle) bool {
-	a = coalesceTextStyle(a, TextStyleUnspecified)
-	b = coalesceTextStyle(b, TextStyleUnspecified)
+	a = coalesceTextStyle(a, textStyleUnspecified)
+	b = coalesceTextStyle(b, textStyleUnspecified)
 	return semanticEqualColor(a.color, b.color) &&
 		semanticEqualDp(a.fontSize, b.fontSize) &&
 		semanticEqualFontWeight(a.fontWeight, b.fontWeight)
@@ -612,9 +621,9 @@ func coalesceTextStyle(ptr, def *TextStyle) *TextStyle {
 // 11. Copy — functional options, nil-safe
 func copyTextStyle(s *TextStyle, options ...func(*TextStyle)) *TextStyle {
 	if !isSpecifiedTextStyle(s) {
-		return TextStyleUnspecified
+		return textStyleUnspecified
 	}
-	opt := *TextStyleUnspecified
+	opt := *textStyleUnspecified
 	for _, option := range options {
 		option(&opt)
 	}
@@ -627,7 +636,7 @@ func copyTextStyle(s *TextStyle, options ...func(*TextStyle)) *TextStyle {
 
 // The only export: a StructCompanion.
 var TextStyleCompanion = companions.NewStructCompanion(
-	func() *TextStyle { return TextStyleUnspecified },
+	func() *TextStyle { return textStyleUnspecified },
 	stringTextStyle,
 	isSpecifiedTextStyle,
 	isUnspecifiedTextStyle,
@@ -656,7 +665,7 @@ When the type cannot hold an actual `NaN`, reserve a **valid bit-pattern** that 
 ```go
 // sentinel/intutils/ints.go
 type IntValue = int
-const IntValueUnspecified IntValue = math.MinInt   // 0x800...0
+const intValueUnspecified IntValue = math.MinInt   // 0x800...0 (unexported)
 
 // The ten funcs are private; only the companion is exported.
 var IntValueCompanion = companions.NewScalarCompanion(/* the ten funcs */)
@@ -683,15 +692,15 @@ Both `true` and `false` are valid, so a bool sentinel is impossible. Promote to 
 enum inside a zero-allocation struct wrapper:
 
 ```go
-type BooleanValue struct{ value booleanValue } // booleanValue is an int enum
+type BooleanValue struct{ value booleanTriValue } // booleanTriValue is an int enum
 
 const (
-	booleanValueUnspecified booleanValue = iota
-	booleanValueTrue
-	booleanValueFalse
+	booleanTriValueUnspecified booleanTriValue = iota
+	booleanTriValueTrue
+	booleanTriValueFalse
 )
 
-var BooleanValueUnspecified = BooleanValue{value: booleanValueUnspecified}
+var booleanValueUnspecified = BooleanValue{value: booleanTriValueUnspecified} // unexported
 func BooleanValueFrom(b bool) BooleanValue { /* -> True/False */ }
 ```
 
@@ -708,7 +717,7 @@ exists. Canonical operations go through the companion:
 ```go
 // Scalar companion over a primitive
 type MyUnit float32
-var myUnitUnspecified = MyUnit(floatutils.Float32Unspecified)
+var myUnitUnspecified = MyUnit(floatutils.Float32Companion.Unspecified())
 
 func isSpecifiedMyUnit(u MyUnit) bool   { return floatutils.Float32Companion.IsSpecified(float32(u)) }
 func isUnspecifiedMyUnit(u MyUnit) bool { return floatutils.Float32Companion.IsUnspecified(float32(u)) }
@@ -733,9 +742,9 @@ var MyUnitCompanion = companions.NewScalarCompanion(
 	takeOrElseMyUnit, mergeMyUnit, sameMyUnit, semanticEqualMyUnit, equalMyUnit, copyMyUnit,
 )
 
-// Struct companion over a pointer type
+// Struct companion over a pointer type — sentinel unexported
 type MyStyle struct { field1 Color; field2 Dp }
-var myStyleUnspecified = &MyStyle{field1: ColorUnspecified, field2: DpUnspecified}
+var myStyleUnspecified = &MyStyle{field1: colorUnspecified, field2: dpUnspecified}
 
 func isSpecifiedMyStyle(s *MyStyle) bool { return s != nil && s != myStyleUnspecified }
 func coalesceMyStyle(ptr, def *MyStyle) *MyStyle {

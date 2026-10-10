@@ -27,12 +27,16 @@ chase at every level.
 | Level | Value | Meaning | Typical use |
 |---|---|---|---|
 | Object absent | `nil` | "Nothing provided" | caller omitted the parameter |
-| Object present, all fields deferred | `XUnspecified` singleton | "Use ambient for everything" | whole-object default |
-| Field absent | `XFieldUnspecified` | "Use ambient for this field" | field-level override |
+| Object present, all fields deferred | `xUnspecified` singleton | "Use ambient for everything" | whole-object default |
+| Field absent | `xFieldUnspecified` | "Use ambient for this field" | field-level override |
+
+The sentinel at every level is **unexported**; the only public way to reach it is
+`XCompanion.Unspecified()`. Uppercase `XUnspecified` names below are shorthand for the concept,
+not exported identifiers.
 
 ```go
 Text("hi")                                       // nil      -> theme
-Text("hi", WithTextStyle(TextStyleUnspecified))  // singleton-> theme
+Text("hi", WithTextStyle(textStyleUnspecified))  // singleton-> theme
 Text("hi", WithTextStyle(&TextStyle{size: 20}))  // partial  -> theme colour + 20
 ```
 
@@ -50,7 +54,7 @@ type Dp float32
 
 var f32 = floatutils.Float32Companion
 
-var dpUnspecified = Dp(floatutils.Float32Unspecified)
+var dpUnspecified = Dp(f32.Unspecified())
 
 func isSpecifiedDp(d Dp) bool   { return f32.IsSpecified(float32(d)) }
 func isUnspecifiedDp(d Dp) bool { return f32.IsUnspecified(float32(d)) }
@@ -114,16 +118,16 @@ func CopyWithAlpha(a float32) ColorCopyOption {
 }
 
 func (c Color) Copy(opts ...ColorCopyOption) Color {
+    f32 := floatutils.Float32Companion
     o := ColorCopyOptions{
-        Alpha: floatutils.Float32Unspecified,
-        Red:   floatutils.Float32Unspecified,
-        Green: floatutils.Float32Unspecified,
-        Blue:  floatutils.Float32Unspecified,
+        Alpha: f32.Unspecified(),
+        Red:   f32.Unspecified(),
+        Green: f32.Unspecified(),
+        Blue:  f32.Unspecified(),
     }
     for _, opt := range opts {
         opt(&o)
     }
-    f32 := floatutils.Float32Companion
     return NewColor(
         f32.TakeOrElse(o.Alpha, c.Alpha()),   // option wins if specified
         f32.TakeOrElse(o.Red, c.Red()),
@@ -152,13 +156,13 @@ type TextStyle struct {
     fontWeight FontWeight
 }
 
-var TextStyleUnspecified = &TextStyle{
+var textStyleUnspecified = &TextStyle{
     color:      colorUnspecified,
     fontSize:   dpUnspecified,
     fontWeight: fontWeightUnspecified,
 }
 
-func isSpecifiedTextStyle(s *TextStyle) bool { return s != nil && s != TextStyleUnspecified }
+func isSpecifiedTextStyle(s *TextStyle) bool { return s != nil && s != textStyleUnspecified }
 func isUnspecifiedTextStyle(s *TextStyle) bool { return !isSpecifiedTextStyle(s) }
 
 func takeOrElseTextStyle(s, def *TextStyle) *TextStyle {
@@ -170,12 +174,12 @@ func takeOrElseTextStyle(s, def *TextStyle) *TextStyle {
 
 // Merge: nil-safe and field-by-field.
 func mergeTextStyle(a, b *TextStyle) *TextStyle {
-    a = coalesceTextStyle(a, TextStyleUnspecified)
-    b = coalesceTextStyle(b, TextStyleUnspecified)
-    if a == TextStyleUnspecified {
+    a = coalesceTextStyle(a, textStyleUnspecified)
+    b = coalesceTextStyle(b, textStyleUnspecified)
+    if a == textStyleUnspecified {
         return b
     }
-    if b == TextStyleUnspecified {
+    if b == textStyleUnspecified {
         return a
     }
     return &TextStyle{
@@ -199,17 +203,17 @@ func sameTextStyle(a, b *TextStyle) bool {
         return true
     }
     if a == nil {
-        return b == TextStyleUnspecified
+        return b == textStyleUnspecified
     }
     if b == nil {
-        return a == TextStyleUnspecified
+        return a == textStyleUnspecified
     }
     return a == b
 }
 
 func semanticEqualTextStyle(a, b *TextStyle) bool {
-    a = coalesceTextStyle(a, TextStyleUnspecified)
-    b = coalesceTextStyle(b, TextStyleUnspecified)
+    a = coalesceTextStyle(a, textStyleUnspecified)
+    b = coalesceTextStyle(b, textStyleUnspecified)
     return semanticEqualColor(a.color, b.color) &&
         semanticEqualDp(a.fontSize, b.fontSize) &&
         semanticEqualFontWeight(a.fontWeight, b.fontWeight)
@@ -232,9 +236,9 @@ func coalesceTextStyle(ptr, def *TextStyle) *TextStyle {
 // Copy: start from the sentinel so unspecified option fields defer to the source.
 func copyTextStyle(s *TextStyle, options ...func(*TextStyle)) *TextStyle {
     if !isSpecifiedTextStyle(s) {
-        return TextStyleUnspecified
+        return textStyleUnspecified
     }
-    opt := *TextStyleUnspecified
+    opt := *textStyleUnspecified
     for _, option := range options {
         option(&opt)
     }
@@ -246,7 +250,7 @@ func copyTextStyle(s *TextStyle, options ...func(*TextStyle)) *TextStyle {
 }
 
 var TextStyleCompanion = companions.NewStructCompanion(
-    func() *TextStyle { return TextStyleUnspecified },
+    func() *TextStyle { return textStyleUnspecified },
     stringTextStyle, isSpecifiedTextStyle, isUnspecifiedTextStyle,
     takeOrElseTextStyle, mergeTextStyle,
     sameTextStyle, semanticEqualTextStyle, equalTextStyle,
@@ -274,7 +278,7 @@ unwanted implicit conversions. `TextUnit(24)` becomes a compile error, forcing `
 // Packs unit type (Sp/Em) and value into 64 bits.
 type TextUnit struct{ packed int64 }
 
-var TextUnitUnspecified = TextUnit{
+var textUnitUnspecified = TextUnit{
     packed: packRaw(int64(TextUnitTypeUnspecified), float32(math.NaN())),
 }
 
@@ -352,11 +356,13 @@ Reject these on sight:
 
 ```go
 type Color interface{ IsSpecified() bool }        // interface forces an allocation
-var UnspecifiedColor *Color = nil                 // nil interface -> panic on method call
+var unspecifiedColor *Color = nil                 // nil interface -> panic on method call
 func (ts *TextStyle) IsSpecified() bool           // method on a possibly-nil receiver
 func (ts *TextStyle) TakeOrElse(def *TextStyle) *TextStyle  // same problem
 func TakeOrElseColor(block func() Color) Color    // lambda escapes to the heap
 type T struct { isSpecified bool }                // flag field costs a second field
+var TextStyleUnspecified = &TextStyle{...}        // exported sentinel: a 2nd source of truth
+const ColorUnspecified = 0                        // exported sentinel: same problem
 // exporting the ten funcs                        // only the companion may be exported
 ```
 
@@ -420,7 +426,9 @@ hot path, or a sentinel built inside a closure instead of at package level.
 //   func coalesceX(ptr, def T) T              // nil coalescing
 //
 // Additional symbols are allowed but MUST be documented and purposeful.
-// All sentinels MUST be package-level constants or variables.
+// A sentinel value MUST NEVER be exported — not as a var, const, or func.
+// Sentinels MUST be package-level constants or variables, package-private, reachable
+// only through Companion.Unspecified().
 // No function may accept func() parameters in hot paths (forces heap escape).
 // No method may have a pointer receiver that checks for nil.
 // END_CONTRACT

@@ -29,14 +29,20 @@ For a complete reference on the pattern, contracts, and usage examples, please r
 
 The definitions are split by type to keep dependencies minimal:
 
-| Package | Type | Companion | Sentinel Value |
-|---------|------|-----------|----------------|
-| [`sentinel/floatutils`](sentinel/floatutils) | `float32`, `float64` | `Float32Companion`, `Float64Companion` | `NaN` (Quiet) |
-| [`sentinel/intutils`](sentinel/intutils) | `int` | `IntValueCompanion` | `math.MinInt` |
-| [`sentinel/stringutils`](sentinel/stringutils) | `string` | `StringsCompanion` | `"\x00unspecified"` |
-| [`sentinel/boolutils`](sentinel/boolutils) | `BooleanValue` | `BooleanValueCompanion` | `BooleanValueUnspecified` (Enum) |
-| [`sentinel/protobufwrapper`](sentinel/protobufwrapper) | `wrapperspb.*Value` | `StringValueCompanion`, `Int32ValueCompanion`, ... (9 total) | empty `&wrapperspb.X{}` singleton |
+| Package | Type | Companion | Sentinel access |
+|---------|------|-----------|-----------------|
+| [`sentinel/floatutils`](sentinel/floatutils) | `float32`, `float64` | `Float32Companion`, `Float64Companion` | `Companion.Unspecified()` |
+| [`sentinel/intutils`](sentinel/intutils) | `int` | `IntValueCompanion` | `Companion.Unspecified()` |
+| [`sentinel/stringutils`](sentinel/stringutils) | `string` | `StringsCompanion` | `Companion.Unspecified()` |
+| [`sentinel/boolutils`](sentinel/boolutils) | `BooleanValue` | `BooleanValueCompanion` | `Companion.Unspecified()` |
+| [`sentinel/protobufwrapper`](sentinel/protobufwrapper) | `wrapperspb.*Value` | `StringValueCompanion`, `Int32ValueCompanion`, ... (9 total) | `Companion.Unspecified()` |
 | [`sentinel/companions`](sentinel/companions) | — | `ScalarCompanion[T]`, `StructCompanion[T]` | the companion machinery itself |
+
+**The sentinel itself is never public.** The reserved value is unexported and reachable only
+through `Companion.Unspecified()` — that is the single way to obtain it, for the library's own
+packages and for any companion you define. What exactly the sentinel is (NaN, `math.MinInt`,
+`"\x00unspecified"`, a singleton) is an internal choice; consult the package source if you
+need to reason about it, never a constant.
 
 Beyond the companion, a few packages export documented *extras*: `floatutils` adds
 `IsInfinite`, `Float32Equals` and `Float64Equals`; `boolutils` keeps `IsTrue`, `IsFalse`,
@@ -79,7 +85,8 @@ type Opacity float32
 
 // 2. Define the Unspecified sentinel
 // (zero-allocation: the constant lives in .rodata)
-var opacityUnspecified = Opacity(floatutils.Float32Unspecified)
+// No sentinel is exported; get it from the companion.
+var opacityUnspecified = Opacity(floatutils.Float32Companion.Unspecified())
 
 func isSpecifiedOpacity(o Opacity) bool   { return floatutils.Float32Companion.IsSpecified(float32(o)) }
 func isUnspecifiedOpacity(o Opacity) bool { return floatutils.Float32Companion.IsUnspecified(float32(o)) }

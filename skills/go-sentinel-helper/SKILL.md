@@ -103,7 +103,7 @@ companion; a few domain methods live on the type itself.
 ```go
 import "github.com/zodimo/go-sentinel-helper/sentinel/boolutils"
 
-var v = boolutils.BooleanValueFrom(true)   // or BooleanValueUnspecified
+var v = boolutils.BooleanValueFrom(true)   // or boolutils.BooleanValueCompanion.Unspecified()
 
 v.IsTrue()                  // true
 v.IsFalse()                 // false (it is explicitly true)
@@ -139,13 +139,35 @@ c.Copy(&wrapperspb.StringValue{Value: "x"}, func(v *wrapperspb.StringValue) {
 }).Value                                                 // "y" — original untouched
 ```
 
-### The two rules that follow from the design
+### The three rules that follow from the design
 
-**Go through the companion, not the sentinel.** Some sentinels are exported
-(`stringutils.StringValueUnspecified`, `floatutils.Float32Unspecified`) so downstream packages
-can build their own helpers on top, but business code should call `c.Unspecified()`. Two
-sources of truth for "what is unspecified" is how a domain type ends up comparing against the
-wrong value.
+**Define the sentinel package-private — never export it.** Whether the type is one of the
+library's own (`stringutils`, `intutils`, `floatutils`, `boolutils`, `protobufwrapper`) or a
+custom type of your own, the sentinel is an unexported package-level symbol
+(`stringValueUnspecified`, `intValueUnspecified`, `float32Unspecified`, `opacityUnspecified`,
+...) or a literal written inline in the package-private funcs. Nothing else. There is no
+"export it so callers can compare" exception, no exported `MyTypeUnspecified`, no exported
+sentinel const. Every package the pattern touches follows the same shape.
+
+**Obtain the sentinel only through `c.Unspecified()`.** `c.Unspecified()` is the only public
+way to get the reserved value back — for the library's companions and for yours. One public
+source of truth for "what is unspecified" is how a domain type ends up comparing against the
+wrong value, so the companion is deliberately the single door. When your type is built on
+another type's sentinel, call that type's companion — e.g.
+`floatutils.Float32Companion.Unspecified()` to seed your own unexported sentinel — rather than a
+constant, and keep your own sentinel unexported either way:
+
+```go
+// right — unexported, seeded from the wrapped type's companion
+var opacityUnspecified = Opacity(floatutils.Float32Companion.Unspecified())
+
+// wrong — a second public source of truth for "unspecified"
+const OpacityUnspecified = Opacity(0)          // exported sentinel: forbidden
+var OpacityUnspecified = Opacity(kNaN)         // exported sentinel: forbidden
+```
+
+A custom package exports **exactly one value: its Companion**. If a caller needs the sentinel,
+it calls `YourCompanion.Unspecified()`.
 
 **Call the companion, and where the hot path matters, call the underlying func.** The
 companion is a package-level interface value, so its methods are indirect calls that the
@@ -198,7 +220,7 @@ import (
 type Opacity float32
 
 // 1. Sentinel — a package-level var (or const for primitives).
-var opacityUnspecified = Opacity(floatutils.Float32Unspecified)
+var opacityUnspecified = Opacity(floatutils.Float32Companion.Unspecified())
 
 func isSpecifiedOpacity(o Opacity) bool {
     return floatutils.Float32Companion.IsSpecified(float32(o))
@@ -292,17 +314,24 @@ transposed `isSpecified`/`isUnspecified` compiles cleanly and inverts silently.
 
 ### Step 4 — Enforce the package contract
 
-A helper package exports **exactly one value: its Companion**. Extra exports are permitted only
-when they are documented and purposeful, following what the library already does:
-`floatutils` exports `Float32Unspecified`, `IsInfinite`, `Float32Equals`, `Float64Equals`; the
-sentinels exist so downstream packages can build their own helpers over them. What must never
-happen is a domain type exporting two ways to ask "is this specified".
+A helper package exports **exactly one value: its Companion** — that holds for your custom
+package exactly as it does for the library's. Do not export a sentinel value, a sentinel const,
+or a `MyTypeUnspecified` var: `IntValueUnspecified`, `StringValueUnspecified`,
+`Float32Unspecified` and any equivalent for a type of your own all belong in the unexported
+world, reachable only through `Companion.Unspecified()`. The only extra exports the library
+keeps are genuine helpers over non-sentinel concerns: `floatutils` exports
+`Float32Infinite`/`FloatInfinite`, `IsInfinite`, `Float32Equals`, `Float64Equals`, and
+`boolutils` exports the `BooleanValue` constructors and its tri-state methods. What must never
+happen is a domain type exporting two ways to ask "is this specified" — one of which is the
+raw sentinel.
 
 Before you call it done, confirm with `go doc -all` that the only new public symbol is the
-companion (plus anything you deliberately documented as an extra):
+companion (plus anything you deliberately documented as an extra). Nothing named
+`*Unspecified` should appear:
 
 ```bash
 go doc -all ./sentinel/opacity
+go doc -all ./sentinel/opacity | grep -i unspecified   # expect no exported sentinel symbol
 ```
 
 The full machine-readable contract and the anti-pattern list live in
