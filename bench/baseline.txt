@@ -1,0 +1,392 @@
+goos: linux
+goarch: amd64
+pkg: github.com/zodimo/go-sentinel-helper/sentinel/boolutils
+cpu: Intel(R) Core(TM) Ultra 9 185H
+BenchmarkBooleanValue/IsSpecified-22    	67257781	         3.427 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsSpecified-22    	72264088	         3.307 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsSpecified-22    	73568766	         3.483 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsSpecified/Unspecified-22         	68926270	         3.044 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsSpecified/Unspecified-22         	74997882	         3.073 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsSpecified/Unspecified-22         	60582056	         3.589 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsUnspecified-22                   	62451225	         3.396 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsUnspecified-22                   	70965046	         3.229 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/IsUnspecified-22                   	72670705	         3.725 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/TakeOrElse/Hit-22                  	68563917	         3.676 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/TakeOrElse/Hit-22                  	68456409	         3.715 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/TakeOrElse/Hit-22                  	60238256	         3.500 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/TakeOrElse/Miss-22                 	58985696	         4.143 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/TakeOrElse/Miss-22                 	52211300	         4.345 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/TakeOrElse/Miss-22                 	59054784	         4.018 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Merge/BothSpecified-22             	74172591	         3.124 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Merge/BothSpecified-22             	75729012	         3.139 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Merge/BothSpecified-22             	64442851	         3.266 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Same-22                            	59592890	         3.648 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Same-22                            	57484946	         3.663 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Same-22                            	66978421	         3.597 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/SemanticEqual-22                   	72220642	         3.557 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/SemanticEqual-22                   	81764532	         3.041 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/SemanticEqual-22                   	75896995	         3.228 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Equal-22                           	59572004	         3.465 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Equal-22                           	50773383	         4.548 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Equal-22                           	64534239	         3.399 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Copy-22                            	64098883	         3.680 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Copy-22                            	66476930	         3.462 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/Copy-22                            	54850410	         3.720 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/String/True-22                     	65609012	         3.820 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/String/True-22                     	54813554	         4.267 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/String/True-22                     	68189004	         4.264 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/String/Unspecified-22              	62522389	         3.986 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/String/Unspecified-22              	58587309	         3.784 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValue/String/Unspecified-22              	60692163	         3.893 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueTrue-22    	969803176	         0.2422 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueTrue-22    	987820542	         0.2418 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueTrue-22    	1000000000	         0.2494 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueFrom/True-22         	1000000000	         0.2319 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueFrom/True-22         	1000000000	         0.2393 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueFrom/True-22         	809784846	         0.2551 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueFrom/False-22        	996043118	         0.2339 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueFrom/False-22        	804168810	         0.2505 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueConstructors/BooleanValueFrom/False-22        	1000000000	         0.2340 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/IsTrue-22                           	1000000000	         0.2345 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/IsTrue-22                           	1000000000	         0.2484 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/IsTrue-22                           	977854156	         0.2397 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/IsFalse-22                          	1000000000	         0.2402 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/IsFalse-22                          	822866725	         0.2596 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/IsFalse-22                          	975815192	         0.2612 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/Bool-22                             	942962312	         0.2508 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/Bool-22                             	896280982	         0.2641 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/Bool-22                             	806877121	         0.2569 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/BoolOrElse/Specified-22             	1000000000	         0.2263 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/BoolOrElse/Specified-22             	1000000000	         0.2208 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/BoolOrElse/Specified-22             	1000000000	         0.2182 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/BoolOrElse/Unspecified-22           	992845897	         0.2387 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/BoolOrElse/Unspecified-22           	791448242	         0.2532 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueAccessors/BoolOrElse/Unspecified-22           	831128187	         0.2578 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueFormatting/String-22                          	803280060	         0.2541 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueFormatting/String-22                          	1000000000	         0.2512 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueFormatting/String-22                          	956603181	         0.2392 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBooleanValueFormatting/SprintfV-22                        	 1000000	       225.7 ns/op	      40 B/op	       2 allocs/op
+BenchmarkBooleanValueFormatting/SprintfV-22                        	 1058830	       213.4 ns/op	      40 B/op	       2 allocs/op
+BenchmarkBooleanValueFormatting/SprintfV-22                        	 1000000	       213.2 ns/op	      40 B/op	       2 allocs/op
+PASS
+ok  	github.com/zodimo/go-sentinel-helper/sentinel/boolutils	23.159s
+PASS
+ok  	github.com/zodimo/go-sentinel-helper/sentinel/companions	0.006s
+goos: linux
+goarch: amd64
+pkg: github.com/zodimo/go-sentinel-helper/sentinel/floatutils
+cpu: Intel(R) Core(TM) Ultra 9 185H
+BenchmarkFloat64Companion/IsSpecified-22         	70562407	         3.241 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/IsSpecified-22         	73583865	         3.239 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/IsSpecified-22         	57545773	         3.486 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/IsSpecified/Unspecified-22         	75028593	         3.208 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/IsSpecified/Unspecified-22         	65115064	         3.545 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/IsSpecified/Unspecified-22         	75920780	         3.122 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/TakeOrElse/Miss-22                 	61696848	         3.996 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/TakeOrElse/Miss-22                 	61619491	         3.891 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/TakeOrElse/Miss-22                 	56080334	         3.938 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Merge/BothSpecified-22             	75502716	         3.574 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Merge/BothSpecified-22             	71264863	         3.200 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Merge/BothSpecified-22             	59564568	         3.875 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Merge/UnspecifiedSrc-22            	51813762	         4.010 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Merge/UnspecifiedSrc-22            	50851690	         3.938 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Merge/UnspecifiedSrc-22            	59110825	         3.739 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Same-22                            	64602242	         3.707 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Same-22                            	59598010	         3.482 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Same-22                            	54318612	         3.719 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/SemanticEqual/Equal-22             	40489453	         6.171 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/SemanticEqual/Equal-22             	40425913	         5.827 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/SemanticEqual/Equal-22             	37637562	         6.044 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/SemanticEqual/Unspecified-22       	51065970	         4.718 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/SemanticEqual/Unspecified-22       	52844238	         4.801 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/SemanticEqual/Unspecified-22       	49961383	         4.517 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Copy-22                            	68119620	         3.432 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Copy-22                            	76343696	         3.380 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/Copy-22                            	71353588	         3.206 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat64Companion/String/Specified-22                	 1112140	       253.3 ns/op	      32 B/op	       3 allocs/op
+BenchmarkFloat64Companion/String/Specified-22                	  920215	       260.1 ns/op	      32 B/op	       3 allocs/op
+BenchmarkFloat64Companion/String/Specified-22                	  911110	       234.7 ns/op	      32 B/op	       3 allocs/op
+BenchmarkFloat64Companion/String/Unspecified-22              	 1788543	       151.7 ns/op	      32 B/op	       2 allocs/op
+BenchmarkFloat64Companion/String/Unspecified-22              	 1692975	       149.5 ns/op	      32 B/op	       2 allocs/op
+BenchmarkFloat64Companion/String/Unspecified-22              	 1637313	       144.6 ns/op	      32 B/op	       2 allocs/op
+BenchmarkFloat32Companion/IsSpecified-22                     	58157919	         3.572 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/IsSpecified-22                     	76178246	         3.408 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/IsSpecified-22                     	59546257	         3.622 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/SemanticEqual/Equal-22             	34138375	         6.800 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/SemanticEqual/Equal-22             	28255561	         7.087 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/SemanticEqual/Equal-22             	35205363	         6.640 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/Merge/BothSpecified-22             	71542064	         3.164 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/Merge/BothSpecified-22             	68491549	         3.433 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/Merge/BothSpecified-22             	74174176	         3.253 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloat32Companion/String/Specified-22                	  956749	       217.2 ns/op	      21 B/op	       3 allocs/op
+BenchmarkFloat32Companion/String/Specified-22                	 1125138	       219.1 ns/op	      21 B/op	       3 allocs/op
+BenchmarkFloat32Companion/String/Specified-22                	 1000000	       228.5 ns/op	      21 B/op	       3 allocs/op
+BenchmarkFloatGenericVsDirect/ViaCompanion-22                	59524768	         3.380 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/ViaCompanion-22                	58624635	         3.466 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/ViaCompanion-22                	58465214	         3.671 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/GenericHelper-22               	929209126	         0.2407 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/GenericHelper-22               	904083592	         0.2373 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/GenericHelper-22               	986557759	         0.2440 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/Inlined-22                     	1000000000	         0.2367 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/Inlined-22                     	785986824	         0.2727 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatGenericVsDirect/Inlined-22                     	1000000000	         0.2367 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatEquals/Float64Equals-22                        	777450765	         0.2585 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatEquals/Float64Equals-22                        	825887413	         0.2580 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatEquals/Float64Equals-22                        	886408520	         0.2503 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatEquals/Float32Equals-22                        	996922058	         0.2539 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatEquals/Float32Equals-22                        	790889792	         0.2725 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatEquals/Float32Equals-22                        	962404779	         0.2573 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIsInfinite/Infinite-22                              	292277188	         0.8691 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIsInfinite/Infinite-22                              	269447529	         0.8403 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIsInfinite/Infinite-22                              	245941593	         0.8359 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIsInfinite/Finite-22                                	965596029	         0.2481 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIsInfinite/Finite-22                                	936402174	         0.2325 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIsInfinite/Finite-22                                	995704684	         0.2580 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatFormatting/CompanionString-22                  	  996135	       222.4 ns/op	      32 B/op	       3 allocs/op
+BenchmarkFloatFormatting/CompanionString-22                  	  977190	       232.3 ns/op	      32 B/op	       3 allocs/op
+BenchmarkFloatFormatting/CompanionString-22                  	  934492	       222.3 ns/op	      32 B/op	       3 allocs/op
+BenchmarkFloatFormatting/SprintfBaseline-22                  	 1257066	       188.5 ns/op	      16 B/op	       1 allocs/op
+BenchmarkFloatFormatting/SprintfBaseline-22                  	 1000000	       208.8 ns/op	      16 B/op	       1 allocs/op
+BenchmarkFloatFormatting/SprintfBaseline-22                  	 1296070	       179.9 ns/op	      16 B/op	       1 allocs/op
+PASS
+ok  	github.com/zodimo/go-sentinel-helper/sentinel/floatutils	24.312s
+goos: linux
+goarch: amd64
+pkg: github.com/zodimo/go-sentinel-helper/sentinel/intutils
+cpu: Intel(R) Core(TM) Ultra 9 185H
+BenchmarkIntValue/IsSpecified-22  	70831266	         3.168 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsSpecified-22  	73697792	         3.004 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsSpecified-22  	71045005	         3.033 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsSpecified/Unspecified-22         	59153382	         3.424 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsSpecified/Unspecified-22         	63686043	         3.150 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsSpecified/Unspecified-22         	75820485	         3.491 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsUnspecified-22                   	73566710	         3.258 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsUnspecified-22                   	69942175	         3.294 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/IsUnspecified-22                   	69148861	         3.150 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/TakeOrElse/Hit-22                  	52917763	         3.865 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/TakeOrElse/Hit-22                  	66082881	         3.656 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/TakeOrElse/Hit-22                  	62096994	         3.717 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/TakeOrElse/Miss-22                 	52360064	         4.258 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/TakeOrElse/Miss-22                 	48460304	         4.415 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/TakeOrElse/Miss-22                 	59532134	         4.056 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Merge/BothSpecified-22             	60164610	         3.511 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Merge/BothSpecified-22             	68575242	         3.194 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Merge/BothSpecified-22             	76208143	         3.288 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Merge/UnspecifiedSrc-22            	61722108	         3.803 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Merge/UnspecifiedSrc-22            	54590367	         4.149 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Merge/UnspecifiedSrc-22            	59532268	         4.068 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Same-22                            	64761734	         4.006 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Same-22                            	68476444	         3.880 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Same-22                            	67208391	         3.758 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/SemanticEqual-22                   	78821808	         3.228 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/SemanticEqual-22                   	70928676	         3.188 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/SemanticEqual-22                   	76862287	         3.205 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Equal-22                           	54248284	         3.883 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Equal-22                           	63342770	         3.712 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Equal-22                           	59324354	         3.620 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Copy-22                            	59834870	         3.945 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Copy-22                            	60347810	         3.933 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/Copy-22                            	46629484	         4.375 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/String/Specified-22                	 2034609	       118.7 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValue/String/Specified-22                	 1987502	       115.8 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValue/String/Specified-22                	 2000745	       125.7 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValue/String/Unspecified-22              	62909632	         3.315 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/String/Unspecified-22              	64095921	         3.491 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValue/String/Unspecified-22              	69258181	         3.506 ns/op	       0 B/op	       0 allocs/op
+BenchmarkIntValueFormatting/CompanionString-22       	 2261517	       113.2 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValueFormatting/CompanionString-22       	 1884741	       117.6 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValueFormatting/CompanionString-22       	 1775725	       116.4 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValueFormatting/SprintfBaseline-22       	 2066497	       106.6 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValueFormatting/SprintfBaseline-22       	 2173503	       110.7 ns/op	      16 B/op	       1 allocs/op
+BenchmarkIntValueFormatting/SprintfBaseline-22       	 2065412	       107.8 ns/op	      16 B/op	       1 allocs/op
+PASS
+ok  	github.com/zodimo/go-sentinel-helper/sentinel/intutils	15.863s
+goos: linux
+goarch: amd64
+pkg: github.com/zodimo/go-sentinel-helper/sentinel/protobufwrapper
+cpu: Intel(R) Core(TM) Ultra 9 185H
+BenchmarkInt32Value/IsSpecified-22         	51262126	         4.197 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/IsSpecified-22         	54157280	         4.286 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/IsSpecified-22         	55511248	         4.660 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/IsSpecified/Unspecified-22         	56333330	         4.624 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/IsSpecified/Unspecified-22         	53575832	         4.453 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/IsSpecified/Unspecified-22         	53611615	         4.419 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/TakeOrElse/Hit-22                  	58691386	         3.622 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/TakeOrElse/Hit-22                  	55422399	         3.778 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/TakeOrElse/Hit-22                  	59574666	         3.641 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/TakeOrElse/Miss-22                 	63010498	         3.805 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/TakeOrElse/Miss-22                 	61067072	         3.812 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/TakeOrElse/Miss-22                 	60471398	         3.990 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/Merge/BothSpecified-22             	 6490939	        35.32 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt32Value/Merge/BothSpecified-22             	 5964273	        38.34 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt32Value/Merge/BothSpecified-22             	 6528324	        35.23 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt32Value/Same/Pointer-22                    	63775801	         3.776 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/Same/Pointer-22                    	59003679	         4.078 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/Same/Pointer-22                    	55313337	         4.183 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/SemanticEqual-22                   	48770056	         4.523 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/SemanticEqual-22                   	50742692	         4.858 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/SemanticEqual-22                   	49065636	         4.963 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/String/Specified-22                	 2142843	       115.1 ns/op	      16 B/op	       1 allocs/op
+BenchmarkInt32Value/String/Specified-22                	 1966266	       113.2 ns/op	      16 B/op	       1 allocs/op
+BenchmarkInt32Value/String/Specified-22                	 2042728	       116.8 ns/op	      16 B/op	       1 allocs/op
+BenchmarkInt32Value/Copy-22                            	 6283782	        36.22 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt32Value/Copy-22                            	 6473629	        35.61 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt32Value/Copy-22                            	 6494630	        35.57 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt32Value/Coalesce/Nil-22                    	57021727	         4.270 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/Coalesce/Nil-22                    	44979525	         4.471 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt32Value/Coalesce/Nil-22                    	53397992	         4.194 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt64Value/TakeOrElse/Miss-22                 	52623720	         4.012 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt64Value/TakeOrElse/Miss-22                 	53135008	         3.872 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt64Value/TakeOrElse/Miss-22                 	65093584	         3.949 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt64Value/Merge/BothSpecified-22             	 6804567	        35.83 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt64Value/Merge/BothSpecified-22             	 6621409	        35.10 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt64Value/Merge/BothSpecified-22             	 6670700	        35.17 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt64Value/Equal/SamePointer-22               	44922686	         5.349 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt64Value/Equal/SamePointer-22               	51128684	         5.177 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt64Value/Equal/SamePointer-22               	44533819	         5.103 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInt64Value/Copy-22                            	 7141110	        34.15 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt64Value/Copy-22                            	 6595016	        35.31 ns/op	      48 B/op	       1 allocs/op
+BenchmarkInt64Value/Copy-22                            	 6964593	        37.01 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt32Value/Merge/BothSpecified-22            	 6881616	        37.01 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt32Value/Merge/BothSpecified-22            	 6088272	        41.01 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt32Value/Merge/BothSpecified-22            	 6979488	        34.56 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt32Value/Copy-22                           	 6645846	        42.79 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt32Value/Copy-22                           	 6604626	        35.11 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt32Value/Copy-22                           	 6705541	        35.07 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt64Value/Merge/BothSpecified-22            	 6739009	        34.46 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt64Value/Merge/BothSpecified-22            	 6815650	        34.83 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt64Value/Merge/BothSpecified-22            	 5431455	        41.02 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt64Value/Copy-22                           	 6344734	        34.96 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt64Value/Copy-22                           	 6671629	        35.08 ns/op	      48 B/op	       1 allocs/op
+BenchmarkUInt64Value/Copy-22                           	 6628386	        34.57 ns/op	      48 B/op	       1 allocs/op
+BenchmarkFloatValue/Merge/BothSpecified-22             	 6692212	        33.89 ns/op	      48 B/op	       1 allocs/op
+BenchmarkFloatValue/Merge/BothSpecified-22             	 6761719	        33.89 ns/op	      48 B/op	       1 allocs/op
+BenchmarkFloatValue/Merge/BothSpecified-22             	 6792787	        33.95 ns/op	      48 B/op	       1 allocs/op
+BenchmarkFloatValue/SemanticEqual-22                   	50904530	         4.976 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatValue/SemanticEqual-22                   	47799813	         4.829 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatValue/SemanticEqual-22                   	49693476	         4.800 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFloatValue/Copy-22                            	 6633202	        35.08 ns/op	      48 B/op	       1 allocs/op
+BenchmarkFloatValue/Copy-22                            	 6109312	        36.84 ns/op	      48 B/op	       1 allocs/op
+BenchmarkFloatValue/Copy-22                            	 6440455	        36.31 ns/op	      48 B/op	       1 allocs/op
+BenchmarkDoubleValue/Merge/BothSpecified-22            	 6318337	        34.93 ns/op	      48 B/op	       1 allocs/op
+BenchmarkDoubleValue/Merge/BothSpecified-22            	 6960074	        35.79 ns/op	      48 B/op	       1 allocs/op
+BenchmarkDoubleValue/Merge/BothSpecified-22            	 6846722	        41.23 ns/op	      48 B/op	       1 allocs/op
+BenchmarkDoubleValue/SemanticEqual-22                  	50867040	         5.093 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDoubleValue/SemanticEqual-22                  	50416314	         4.547 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDoubleValue/SemanticEqual-22                  	51384160	         4.944 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDoubleValue/Copy-22                           	 6775960	        34.98 ns/op	      48 B/op	       1 allocs/op
+BenchmarkDoubleValue/Copy-22                           	 6360175	        49.71 ns/op	      48 B/op	       1 allocs/op
+BenchmarkDoubleValue/Copy-22                           	 6706062	        35.95 ns/op	      48 B/op	       1 allocs/op
+BenchmarkBoolValue/Merge/BothSpecified-22              	 6512499	        34.31 ns/op	      48 B/op	       1 allocs/op
+BenchmarkBoolValue/Merge/BothSpecified-22              	 6802471	        35.84 ns/op	      48 B/op	       1 allocs/op
+BenchmarkBoolValue/Merge/BothSpecified-22              	 6779090	        35.50 ns/op	      48 B/op	       1 allocs/op
+BenchmarkBoolValue/Copy-22                             	 6622113	        34.90 ns/op	      48 B/op	       1 allocs/op
+BenchmarkBoolValue/Copy-22                             	 6507507	        35.38 ns/op	      48 B/op	       1 allocs/op
+BenchmarkBoolValue/Copy-22                             	 6689834	        34.44 ns/op	      48 B/op	       1 allocs/op
+BenchmarkStringValue/Merge/BothSpecified-22            	 6347876	        38.77 ns/op	      64 B/op	       1 allocs/op
+BenchmarkStringValue/Merge/BothSpecified-22            	 6271957	        37.52 ns/op	      64 B/op	       1 allocs/op
+BenchmarkStringValue/Merge/BothSpecified-22            	 6381694	        36.64 ns/op	      64 B/op	       1 allocs/op
+BenchmarkStringValue/String/Specified-22               	 1000000	       233.3 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValue/String/Specified-22               	 1065343	       226.8 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValue/String/Specified-22               	 1000000	       239.0 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValue/SemanticEqual-22                  	30753912	         6.690 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/SemanticEqual-22                  	37616755	         6.476 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/SemanticEqual-22                  	39077872	         6.737 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Miss-22                	54077414	         3.711 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Miss-22                	57695053	         3.747 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Miss-22                	59008233	         3.619 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Copy-22                           	 6312388	        39.73 ns/op	      64 B/op	       1 allocs/op
+BenchmarkStringValue/Copy-22                           	 5872230	        38.61 ns/op	      64 B/op	       1 allocs/op
+BenchmarkStringValue/Copy-22                           	 6099667	        38.72 ns/op	      64 B/op	       1 allocs/op
+BenchmarkBytesValue/Merge/16B-22                       	 3573549	        80.33 ns/op	 199.18 MB/s	      80 B/op	       2 allocs/op
+BenchmarkBytesValue/Merge/16B-22                       	 3554185	        66.87 ns/op	 239.26 MB/s	      80 B/op	       2 allocs/op
+BenchmarkBytesValue/Merge/16B-22                       	 3459487	        73.05 ns/op	 219.02 MB/s	      80 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/16B-22                        	 3404440	        70.73 ns/op	 226.20 MB/s	      80 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/16B-22                        	 3389197	        68.36 ns/op	 234.06 MB/s	      80 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/16B-22                        	 3578732	        66.46 ns/op	 240.73 MB/s	      80 B/op	       2 allocs/op
+BenchmarkBytesValue/SemanticEqual/16B-22               	33360488	         7.003 ns/op	2284.85 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/SemanticEqual/16B-22               	34134780	         7.403 ns/op	2161.28 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/SemanticEqual/16B-22               	33487486	         7.166 ns/op	2232.62 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/Merge/1KiB-22                      	  428438	       484.5 ns/op	2113.61 MB/s	    1088 B/op	       2 allocs/op
+BenchmarkBytesValue/Merge/1KiB-22                      	  497900	       451.2 ns/op	2269.57 MB/s	    1088 B/op	       2 allocs/op
+BenchmarkBytesValue/Merge/1KiB-22                      	  453397	       459.2 ns/op	2230.18 MB/s	    1088 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/1KiB-22                       	  562125	       462.0 ns/op	2216.69 MB/s	    1088 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/1KiB-22                       	  507044	       420.1 ns/op	2437.37 MB/s	    1088 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/1KiB-22                       	  558309	       462.9 ns/op	2212.36 MB/s	    1088 B/op	       2 allocs/op
+BenchmarkBytesValue/SemanticEqual/1KiB-22              	28640352	         7.333 ns/op	139639.44 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/SemanticEqual/1KiB-22              	34073692	         7.353 ns/op	139255.46 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/SemanticEqual/1KiB-22              	31560458	         7.203 ns/op	142167.62 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/Merge/1MiB-22                      	     556	    379570 ns/op	2762.53 MB/s	 1048644 B/op	       2 allocs/op
+BenchmarkBytesValue/Merge/1MiB-22                      	     634	    354301 ns/op	2959.57 MB/s	 1048644 B/op	       2 allocs/op
+BenchmarkBytesValue/Merge/1MiB-22                      	     508	    417479 ns/op	2511.69 MB/s	 1048644 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/1MiB-22                       	     468	    498629 ns/op	2102.92 MB/s	 1048644 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/1MiB-22                       	     592	    434421 ns/op	2413.73 MB/s	 1048645 B/op	       2 allocs/op
+BenchmarkBytesValue/Copy/1MiB-22                       	     512	    433090 ns/op	2421.15 MB/s	 1048641 B/op	       2 allocs/op
+BenchmarkBytesValue/SemanticEqual/1MiB-22              	29010534	         6.997 ns/op	149858562.30 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/SemanticEqual/1MiB-22              	30219099	         7.533 ns/op	139188965.10 MB/s	       0 B/op	       0 allocs/op
+BenchmarkBytesValue/SemanticEqual/1MiB-22              	30643591	         7.148 ns/op	146702647.70 MB/s	       0 B/op	       0 allocs/op
+BenchmarkCompanionDispatch/ViaCompanion-22             	49622157	         4.505 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCompanionDispatch/ViaCompanion-22             	53590645	         4.199 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCompanionDispatch/ViaCompanion-22             	52490292	         4.303 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCompanionDispatch/DirectHelper-22             	876297211	         0.2597 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCompanionDispatch/DirectHelper-22             	988992400	         0.2385 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCompanionDispatch/DirectHelper-22             	1000000000	         0.2611 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringFormatting/Int32Value-22                	 1954734	       117.5 ns/op	      16 B/op	       1 allocs/op
+BenchmarkStringFormatting/Int32Value-22                	 2091380	       111.6 ns/op	      16 B/op	       1 allocs/op
+BenchmarkStringFormatting/Int32Value-22                	 2016085	       120.5 ns/op	      16 B/op	       1 allocs/op
+BenchmarkStringFormatting/SprintfBaseline-22           	 2099883	       104.9 ns/op	      16 B/op	       1 allocs/op
+BenchmarkStringFormatting/SprintfBaseline-22           	 2151340	       104.6 ns/op	      16 B/op	       1 allocs/op
+BenchmarkStringFormatting/SprintfBaseline-22           	 2245083	       104.1 ns/op	      16 B/op	       1 allocs/op
+PASS
+ok  	github.com/zodimo/go-sentinel-helper/sentinel/protobufwrapper	41.026s
+goos: linux
+goarch: amd64
+pkg: github.com/zodimo/go-sentinel-helper/sentinel/stringutils
+cpu: Intel(R) Core(TM) Ultra 9 185H
+BenchmarkStringValue/IsSpecified-22  	52887657	         4.283 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsSpecified-22  	50354125	         4.221 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsSpecified-22  	48241254	         4.427 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsSpecified/Unspecified-22         	53025174	         3.833 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsSpecified/Unspecified-22         	70101951	         3.290 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsSpecified/Unspecified-22         	63234295	         3.648 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsUnspecified-22                   	55528953	         4.098 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsUnspecified-22                   	61318563	         4.508 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/IsUnspecified-22                   	51046167	         4.252 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Hit-22                  	57221438	         4.185 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Hit-22                  	54922132	         4.382 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Hit-22                  	42654518	         4.987 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Miss-22                 	43895305	         4.595 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Miss-22                 	52564938	         4.425 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/TakeOrElse/Miss-22                 	55830507	         4.463 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Merge/BothSpecified-22             	48734396	         4.493 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Merge/BothSpecified-22             	47112060	         4.465 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Merge/BothSpecified-22             	47226153	         5.073 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Merge/EmptySrc-22                  	43024276	         4.923 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Merge/EmptySrc-22                  	39723076	         5.379 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Merge/EmptySrc-22                  	49647728	         4.897 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Same-22                            	42714460	         5.276 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Same-22                            	42609518	         5.444 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Same-22                            	42318588	         5.475 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/SemanticEqual-22                   	48251700	         6.021 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/SemanticEqual-22                   	42649220	         5.560 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/SemanticEqual-22                   	45261722	         5.155 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Equal-22                           	34088473	         5.986 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Equal-22                           	39329889	         6.470 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Equal-22                           	40224445	         5.643 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Copy-22                            	65173522	         3.195 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Copy-22                            	61766124	         3.278 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/Copy-22                            	77381794	         3.272 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/String/Specified-22                	 1071692	       230.9 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValue/String/Specified-22                	  906946	       228.5 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValue/String/Specified-22                	  890766	       231.4 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValue/String/Unspecified-22              	61747612	         4.051 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/String/Unspecified-22              	62084514	         3.912 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValue/String/Unspecified-22              	51784716	         4.067 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringValueFormatting/CompanionString-22       	 1066494	       233.1 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValueFormatting/CompanionString-22       	  991174	       231.2 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValueFormatting/CompanionString-22       	  946347	       240.4 ns/op	      48 B/op	       2 allocs/op
+BenchmarkStringValueFormatting/SprintfBaseline-22       	 1000000	       209.4 ns/op	      32 B/op	       1 allocs/op
+BenchmarkStringValueFormatting/SprintfBaseline-22       	 1000000	       203.1 ns/op	      32 B/op	       1 allocs/op
+BenchmarkStringValueFormatting/SprintfBaseline-22       	 1202754	       206.8 ns/op	      32 B/op	       1 allocs/op
+PASS
+ok  	github.com/zodimo/go-sentinel-helper/sentinel/stringutils	14.933s
